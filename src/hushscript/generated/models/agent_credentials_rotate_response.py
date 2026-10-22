@@ -15,8 +15,9 @@ T = TypeVar("T", bound="AgentCredentialsRotateResponse")
 class AgentCredentialsRotateResponse:
     """
     Attributes:
-        pat (str): The successor token, returned exactly once. Only its hash is stored; there is no way to recover it
-            later. The predecessor that authenticated this request stops working immediately.
+        pat (str): The successor token. Only its hash is stored; there is no way to recover it later. A repeated call
+            with the predecessor while this token is unused returns a new secret for the same pat_id. The predecessor keeps
+            working for this route only, until the successor's first successful request or one hour, whichever comes first.
         pat_id (str): The successor's id.
         scopes (list[str]): The scopes carried by pat, identical to the predecessor's.
         expires_at (int | None | Unset): The successor's expiry policy, carried over from the predecessor unchanged.

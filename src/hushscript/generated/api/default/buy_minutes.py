@@ -106,9 +106,9 @@ def sync_detailed(
     either through the Hushscript app or by opening the hosted Checkout session create_setup_session
     returns. A request with no quick_payment_method_id, or a Quick Buy charge that needed
     authentication, a different payment method, or was declined, is refused outright rather than opened
-    as a Checkout session nobody in this flow could complete. Needs the billing scope AND machine
-    billing switched on for the account in the Hushscript app; either one off is a pat_scope_missing
-    (code 2023) refusal, whichever it was.
+    as a Checkout session nobody in this flow could complete. Needs the billing scope, the token's own
+    buy-minutes flag (set when the token is created), AND machine billing switched on for the account in
+    the Hushscript app; any one off is a pat_scope_missing (code 2023) refusal, whichever it was.
 
     Args:
         body (BuyMinutesBody):
@@ -148,9 +148,9 @@ def sync(
     either through the Hushscript app or by opening the hosted Checkout session create_setup_session
     returns. A request with no quick_payment_method_id, or a Quick Buy charge that needed
     authentication, a different payment method, or was declined, is refused outright rather than opened
-    as a Checkout session nobody in this flow could complete. Needs the billing scope AND machine
-    billing switched on for the account in the Hushscript app; either one off is a pat_scope_missing
-    (code 2023) refusal, whichever it was.
+    as a Checkout session nobody in this flow could complete. Needs the billing scope, the token's own
+    buy-minutes flag (set when the token is created), AND machine billing switched on for the account in
+    the Hushscript app; any one off is a pat_scope_missing (code 2023) refusal, whichever it was.
 
     Args:
         body (BuyMinutesBody):
@@ -185,9 +185,9 @@ async def asyncio_detailed(
     either through the Hushscript app or by opening the hosted Checkout session create_setup_session
     returns. A request with no quick_payment_method_id, or a Quick Buy charge that needed
     authentication, a different payment method, or was declined, is refused outright rather than opened
-    as a Checkout session nobody in this flow could complete. Needs the billing scope AND machine
-    billing switched on for the account in the Hushscript app; either one off is a pat_scope_missing
-    (code 2023) refusal, whichever it was.
+    as a Checkout session nobody in this flow could complete. Needs the billing scope, the token's own
+    buy-minutes flag (set when the token is created), AND machine billing switched on for the account in
+    the Hushscript app; any one off is a pat_scope_missing (code 2023) refusal, whichever it was.
 
     Args:
         body (BuyMinutesBody):
@@ -225,9 +225,9 @@ async def asyncio(
     either through the Hushscript app or by opening the hosted Checkout session create_setup_session
     returns. A request with no quick_payment_method_id, or a Quick Buy charge that needed
     authentication, a different payment method, or was declined, is refused outright rather than opened
-    as a Checkout session nobody in this flow could complete. Needs the billing scope AND machine
-    billing switched on for the account in the Hushscript app; either one off is a pat_scope_missing
-    (code 2023) refusal, whichever it was.
+    as a Checkout session nobody in this flow could complete. Needs the billing scope, the token's own
+    buy-minutes flag (set when the token is created), AND machine billing switched on for the account in
+    the Hushscript app; any one off is a pat_scope_missing (code 2023) refusal, whichever it was.
 
     Args:
         body (BuyMinutesBody):

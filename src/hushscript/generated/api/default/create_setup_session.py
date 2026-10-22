@@ -103,8 +103,9 @@ def sync_detailed(
     card; call this endpoint again for a fresh link after that. idempotency_key is optional: omit it and
     every call opens a new Session, which is safe since a setup Session is never charged and expires on
     its own; supply your own key only if you want a retried call to land on the same Session instead.
-    Needs the billing scope AND machine billing switched on for the account in the Hushscript app;
-    either one off is a pat_scope_missing (code 2023) refusal, whichever it was.
+    Needs the billing scope, the token's own buy-minutes flag (set when the token is created), AND
+    machine billing switched on for the account in the Hushscript app; any one off is a
+    pat_scope_missing (code 2023) refusal, whichever it was.
 
     Args:
         body (CreateSetupSessionBody | Unset):
@@ -145,8 +146,9 @@ def sync(
     card; call this endpoint again for a fresh link after that. idempotency_key is optional: omit it and
     every call opens a new Session, which is safe since a setup Session is never charged and expires on
     its own; supply your own key only if you want a retried call to land on the same Session instead.
-    Needs the billing scope AND machine billing switched on for the account in the Hushscript app;
-    either one off is a pat_scope_missing (code 2023) refusal, whichever it was.
+    Needs the billing scope, the token's own buy-minutes flag (set when the token is created), AND
+    machine billing switched on for the account in the Hushscript app; any one off is a
+    pat_scope_missing (code 2023) refusal, whichever it was.
 
     Args:
         body (CreateSetupSessionBody | Unset):
@@ -182,8 +184,9 @@ async def asyncio_detailed(
     card; call this endpoint again for a fresh link after that. idempotency_key is optional: omit it and
     every call opens a new Session, which is safe since a setup Session is never charged and expires on
     its own; supply your own key only if you want a retried call to land on the same Session instead.
-    Needs the billing scope AND machine billing switched on for the account in the Hushscript app;
-    either one off is a pat_scope_missing (code 2023) refusal, whichever it was.
+    Needs the billing scope, the token's own buy-minutes flag (set when the token is created), AND
+    machine billing switched on for the account in the Hushscript app; any one off is a
+    pat_scope_missing (code 2023) refusal, whichever it was.
 
     Args:
         body (CreateSetupSessionBody | Unset):
@@ -222,8 +225,9 @@ async def asyncio(
     card; call this endpoint again for a fresh link after that. idempotency_key is optional: omit it and
     every call opens a new Session, which is safe since a setup Session is never charged and expires on
     its own; supply your own key only if you want a retried call to land on the same Session instead.
-    Needs the billing scope AND machine billing switched on for the account in the Hushscript app;
-    either one off is a pat_scope_missing (code 2023) refusal, whichever it was.
+    Needs the billing scope, the token's own buy-minutes flag (set when the token is created), AND
+    machine billing switched on for the account in the Hushscript app; any one off is a
+    pat_scope_missing (code 2023) refusal, whichever it was.
 
     Args:
         body (CreateSetupSessionBody | Unset):

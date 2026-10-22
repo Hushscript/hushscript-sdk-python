@@ -12,7 +12,6 @@ from __future__ import annotations
 
 import json
 import os
-import re
 import shutil
 import subprocess
 import sys
@@ -163,40 +162,6 @@ def _load_spec_text(source: str) -> str:
     return Path(source).read_text(encoding="utf-8")
 
 
-def declare_path_parameters(spec: dict[str, Any]) -> list[str]:
-    """Adds a string path parameter wherever a path template names one the operation omits.
-
-    openapi-python-client skips an operation whose template and parameters disagree, which left
-    POST /v1/agent/accounts/{signup_id}/claim out of the client. Only the generator input is
-    patched; openapi.json keeps the served bytes. Returns the operations that were patched.
-    """
-    patched: list[str] = []
-    for path, item in _record(spec.get("paths"), "paths").items():
-        operations = _record(item, f"paths.{path}")
-        names = re.findall(r"\{([^}]+)\}", path)
-        shared = {p.get("name") for p in operations.get("parameters", []) if p.get("in") == "path"}
-        for method in HTTP_METHODS:
-            operation = operations.get(method)
-            if operation is None:
-                continue
-            operation_record = _record(operation, f"{method} {path}")
-            declared = shared | {
-                p.get("name")
-                for p in operation_record.get("parameters", [])
-                if p.get("in") == "path"
-            }
-            missing = [name for name in names if name not in declared]
-            if not missing:
-                continue
-            parameters = operation_record.setdefault("parameters", [])
-            parameters.extend(
-                {"name": name, "in": "path", "required": True, "schema": {"type": "string"}}
-                for name in missing
-            )
-            patched.append(f"{method.upper()} {path}")
-    return patched
-
-
 def _clear(directory: Path) -> None:
     # The directory can be a bind mount, so its contents go, not the directory itself.
     directory.mkdir(parents=True, exist_ok=True)
@@ -224,9 +189,6 @@ def generate(source: str = DEFAULT_SPEC) -> None:
         shutil.rmtree(BUILD)
     BUILD.parent.mkdir(parents=True, exist_ok=True)
     generator_spec = BUILD.parent / "openapi.generator.json"
-    patched = declare_path_parameters(spec)
-    for operation in patched:
-        print(f"declared the missing path parameter of {operation} for the generator")
     generator_spec.write_text(json.dumps(spec), encoding="utf-8")
     subprocess.run(
         [

@@ -30,8 +30,8 @@ class OrgSummaryResponse:
             adjustment.
         spendable_seconds (int): balance_seconds floored at zero, and zeroed outright when the org is outside its
             funding window (frozen or lapsed past grace).
-        pool_expires_at (int | None): Unix seconds the pool's own rolling 365-day expiry falls at, re-anchored on every
-            credit and every settle. Null if the pool has never held a positive balance.
+        pool_expires_at (int | None): Always null; minutes do not expire. Retained for compatibility until the next SDK
+            major version.
         default_retention_days (int | None):
         max_retention_days (int | None):
         billing_email (None | str): The workspace's billing contact. Null unless the caller is an admin or holds the

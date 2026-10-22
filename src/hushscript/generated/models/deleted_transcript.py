@@ -29,7 +29,8 @@ class DeletedTranscript:
             and paged on.
         deleted_at (int):
         cause (DeletedTranscriptCause): Which deletion path removed the transcript: an explicit delete (manual), the
-            transcript's own auto_delete_at retention date (scheduled), the dormant-account purge (dormant), or the global
+            transcript's own auto_delete_at retention date (scheduled), the personal-transcript purge after about 24 months
+            of account inactivity and a 30-day warning (dormant; excludes legal holds and firm custody), or the global
             retention sweep (expired).
         receipt (DeletedTranscriptReceiptType0 | None): The receipt recorded when the transcript was deleted, kept so
             the deletion stays evidenced after the content itself is gone. Null when the stored receipt could not be read

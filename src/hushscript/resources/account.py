@@ -31,6 +31,7 @@ class Balance(ExtraFields):
     held_seconds: int
     """Committed to in-flight jobs, and already deducted from `seconds`."""
     expires_at: datetime | None
+    """Always None; minutes do not expire."""
     purchases_remaining: int | None
     """Agent accounts only, else None."""
 
@@ -76,6 +77,7 @@ class Account(ExtraFields):
     held_seconds: int
     """Committed to in-flight jobs, and already deducted from `balance_seconds`."""
     credits_expire_at: datetime | None
+    """Always None; minutes do not expire."""
     card_on_file: bool
     data_region: str
     """For example `us`, `eu`, `apac` or `oc`."""

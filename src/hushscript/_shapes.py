@@ -32,7 +32,7 @@ UPLOAD_LIMITS: Final[Shape] = object_of(
     }
 )
 
-# `purchases_remaining_in_window` is in the body for agent accounts only, and not yet in the schema.
+# `purchases_remaining_in_window` is in the body for agent accounts only.
 BALANCE: Final[Shape] = object_of(
     {"balance_seconds": integer, "held_seconds": count},
     {

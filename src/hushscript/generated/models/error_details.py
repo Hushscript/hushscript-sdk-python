@@ -13,10 +13,12 @@ T = TypeVar("T", bound="ErrorDetails")
 
 @_attrs_define
 class ErrorDetails:
-    """Structured recovery detail for an error that is not a plain balance shortfall. Present on agent_pack_locked and
-    agent_purchase_capped.
+    """Structured recovery detail for an error that is not a plain balance shortfall. Present on agent_pack_locked,
+    agent_purchase_capped and policy_version_stale.
 
         Attributes:
+            current_version (str | Unset): The server's current terms version. Present on policy_version_stale; send it as
+                accept_terms_version to retry.
             allowed_packs (list[str] | Unset): Pack ids the agent account may buy right now. Present on agent_pack_locked;
                 retry with one of these.
             limit (int | Unset): The per-credential purchase cap for the rolling window. Present on agent_purchase_capped.
@@ -25,6 +27,7 @@ class ErrorDetails:
                 Present on agent_purchase_capped; matches the Retry-After header.
     """
 
+    current_version: str | Unset = UNSET
     allowed_packs: list[str] | Unset = UNSET
     limit: int | Unset = UNSET
     window_seconds: int | Unset = UNSET
@@ -32,6 +35,8 @@ class ErrorDetails:
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
+        current_version = self.current_version
+
         allowed_packs: list[str] | Unset = UNSET
         if not isinstance(self.allowed_packs, Unset):
             allowed_packs = self.allowed_packs
@@ -45,6 +50,8 @@ class ErrorDetails:
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update({})
+        if current_version is not UNSET:
+            field_dict["current_version"] = current_version
         if allowed_packs is not UNSET:
             field_dict["allowed_packs"] = allowed_packs
         if limit is not UNSET:
@@ -59,6 +66,8 @@ class ErrorDetails:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
+        current_version = d.pop("current_version", UNSET)
+
         allowed_packs = cast(list[str], d.pop("allowed_packs", UNSET))
 
         limit = d.pop("limit", UNSET)
@@ -68,6 +77,7 @@ class ErrorDetails:
         retry_after_seconds = d.pop("retry_after_seconds", UNSET)
 
         error_details = cls(
+            current_version=current_version,
             allowed_packs=allowed_packs,
             limit=limit,
             window_seconds=window_seconds,

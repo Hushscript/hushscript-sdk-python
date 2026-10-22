@@ -71,12 +71,19 @@ def sync_detailed(
 ) -> Response[AgentCredentialsRotateResponse | Error]:
     """Rotate the calling agent PAT
 
-     Atomically mints a successor personal access token and revokes the one that authenticated this
-    request. A machine account has no password and no usable mailbox, so this is its only way to rotate
-    a leaked credential. The successor keeps the predecessor's scopes, billing_enabled flag, name,
-    client_label, and expiry policy; only the secret changes. The predecessor fails authentication on
-    the very next request. This route references no token but the one that called it: it cannot list,
-    mint, or revoke any other credential.
+     Atomically mints a successor personal access token for the one that authenticated this request. A
+    machine account has no password and no usable mailbox, so this is its only way to rotate a leaked
+    credential. The successor keeps the predecessor's scopes, billing_enabled flag, name, client_label,
+    and expiry policy; only the secret changes. The predecessor is not revoked at once. It stays in a
+    grace period that ends at the successor's first successful request or one hour after the rotation,
+    whichever comes first. During that period it authenticates only this route, and every other route
+    answers it with a bare 401. If the 201 is lost, call this route again with the predecessor while the
+    successor is still unused: the response carries the same pat_id and a NEW secret, and the earlier
+    successor secret stops working. Keep the predecessor until the successor has made one successful
+    call, because a late-landing earlier retry can replace the successor's secret. Then make one call
+    with the successor right away to retire the predecessor. Once the successor has been used or the
+    hour has passed, the predecessor is refused here as well. This route references no token but the one
+    that called it and that token's own successor: it cannot list, mint, or revoke any other credential.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -101,12 +108,19 @@ def sync(
 ) -> AgentCredentialsRotateResponse | Error | None:
     """Rotate the calling agent PAT
 
-     Atomically mints a successor personal access token and revokes the one that authenticated this
-    request. A machine account has no password and no usable mailbox, so this is its only way to rotate
-    a leaked credential. The successor keeps the predecessor's scopes, billing_enabled flag, name,
-    client_label, and expiry policy; only the secret changes. The predecessor fails authentication on
-    the very next request. This route references no token but the one that called it: it cannot list,
-    mint, or revoke any other credential.
+     Atomically mints a successor personal access token for the one that authenticated this request. A
+    machine account has no password and no usable mailbox, so this is its only way to rotate a leaked
+    credential. The successor keeps the predecessor's scopes, billing_enabled flag, name, client_label,
+    and expiry policy; only the secret changes. The predecessor is not revoked at once. It stays in a
+    grace period that ends at the successor's first successful request or one hour after the rotation,
+    whichever comes first. During that period it authenticates only this route, and every other route
+    answers it with a bare 401. If the 201 is lost, call this route again with the predecessor while the
+    successor is still unused: the response carries the same pat_id and a NEW secret, and the earlier
+    successor secret stops working. Keep the predecessor until the successor has made one successful
+    call, because a late-landing earlier retry can replace the successor's secret. Then make one call
+    with the successor right away to retire the predecessor. Once the successor has been used or the
+    hour has passed, the predecessor is refused here as well. This route references no token but the one
+    that called it and that token's own successor: it cannot list, mint, or revoke any other credential.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -127,12 +141,19 @@ async def asyncio_detailed(
 ) -> Response[AgentCredentialsRotateResponse | Error]:
     """Rotate the calling agent PAT
 
-     Atomically mints a successor personal access token and revokes the one that authenticated this
-    request. A machine account has no password and no usable mailbox, so this is its only way to rotate
-    a leaked credential. The successor keeps the predecessor's scopes, billing_enabled flag, name,
-    client_label, and expiry policy; only the secret changes. The predecessor fails authentication on
-    the very next request. This route references no token but the one that called it: it cannot list,
-    mint, or revoke any other credential.
+     Atomically mints a successor personal access token for the one that authenticated this request. A
+    machine account has no password and no usable mailbox, so this is its only way to rotate a leaked
+    credential. The successor keeps the predecessor's scopes, billing_enabled flag, name, client_label,
+    and expiry policy; only the secret changes. The predecessor is not revoked at once. It stays in a
+    grace period that ends at the successor's first successful request or one hour after the rotation,
+    whichever comes first. During that period it authenticates only this route, and every other route
+    answers it with a bare 401. If the 201 is lost, call this route again with the predecessor while the
+    successor is still unused: the response carries the same pat_id and a NEW secret, and the earlier
+    successor secret stops working. Keep the predecessor until the successor has made one successful
+    call, because a late-landing earlier retry can replace the successor's secret. Then make one call
+    with the successor right away to retire the predecessor. Once the successor has been used or the
+    hour has passed, the predecessor is refused here as well. This route references no token but the one
+    that called it and that token's own successor: it cannot list, mint, or revoke any other credential.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -155,12 +176,19 @@ async def asyncio(
 ) -> AgentCredentialsRotateResponse | Error | None:
     """Rotate the calling agent PAT
 
-     Atomically mints a successor personal access token and revokes the one that authenticated this
-    request. A machine account has no password and no usable mailbox, so this is its only way to rotate
-    a leaked credential. The successor keeps the predecessor's scopes, billing_enabled flag, name,
-    client_label, and expiry policy; only the secret changes. The predecessor fails authentication on
-    the very next request. This route references no token but the one that called it: it cannot list,
-    mint, or revoke any other credential.
+     Atomically mints a successor personal access token for the one that authenticated this request. A
+    machine account has no password and no usable mailbox, so this is its only way to rotate a leaked
+    credential. The successor keeps the predecessor's scopes, billing_enabled flag, name, client_label,
+    and expiry policy; only the secret changes. The predecessor is not revoked at once. It stays in a
+    grace period that ends at the successor's first successful request or one hour after the rotation,
+    whichever comes first. During that period it authenticates only this route, and every other route
+    answers it with a bare 401. If the 201 is lost, call this route again with the predecessor while the
+    successor is still unused: the response carries the same pat_id and a NEW secret, and the earlier
+    successor secret stops working. Keep the predecessor until the successor has made one successful
+    call, because a late-landing earlier retry can replace the successor's secret. Then make one call
+    with the successor right away to retire the predecessor. Once the successor has been used or the
+    hour has passed, the predecessor is refused here as well. This route references no token but the one
+    that called it and that token's own successor: it cannot list, mint, or revoke any other credential.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
