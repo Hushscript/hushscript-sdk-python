@@ -73,8 +73,9 @@ def sync_detailed(
 
      Returns the account's minute-pack catalogue, priced in the account's own currency, including any
     referral buyer bonus currently available. Read the id of the pack to buy from here before calling
-    buy_minutes. Needs the billing scope AND machine billing switched on for the account in the
-    Hushscript app; either one off is a pat_scope_missing (code 2023) refusal, whichever it was.
+    buy_minutes. Needs the billing scope, the token's own buy-minutes flag (set when the token is
+    created), AND machine billing switched on for the account in the Hushscript app; any one off is a
+    pat_scope_missing (code 2023) refusal, whichever it was.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -101,8 +102,9 @@ def sync(
 
      Returns the account's minute-pack catalogue, priced in the account's own currency, including any
     referral buyer bonus currently available. Read the id of the pack to buy from here before calling
-    buy_minutes. Needs the billing scope AND machine billing switched on for the account in the
-    Hushscript app; either one off is a pat_scope_missing (code 2023) refusal, whichever it was.
+    buy_minutes. Needs the billing scope, the token's own buy-minutes flag (set when the token is
+    created), AND machine billing switched on for the account in the Hushscript app; any one off is a
+    pat_scope_missing (code 2023) refusal, whichever it was.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -125,8 +127,9 @@ async def asyncio_detailed(
 
      Returns the account's minute-pack catalogue, priced in the account's own currency, including any
     referral buyer bonus currently available. Read the id of the pack to buy from here before calling
-    buy_minutes. Needs the billing scope AND machine billing switched on for the account in the
-    Hushscript app; either one off is a pat_scope_missing (code 2023) refusal, whichever it was.
+    buy_minutes. Needs the billing scope, the token's own buy-minutes flag (set when the token is
+    created), AND machine billing switched on for the account in the Hushscript app; any one off is a
+    pat_scope_missing (code 2023) refusal, whichever it was.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -151,8 +154,9 @@ async def asyncio(
 
      Returns the account's minute-pack catalogue, priced in the account's own currency, including any
     referral buyer bonus currently available. Read the id of the pack to buy from here before calling
-    buy_minutes. Needs the billing scope AND machine billing switched on for the account in the
-    Hushscript app; either one off is a pat_scope_missing (code 2023) refusal, whichever it was.
+    buy_minutes. Needs the billing scope, the token's own buy-minutes flag (set when the token is
+    created), AND machine billing switched on for the account in the Hushscript app; any one off is a
+    pat_scope_missing (code 2023) refusal, whichever it was.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

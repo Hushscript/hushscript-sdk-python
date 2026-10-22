@@ -97,8 +97,9 @@ def sync_detailed(
     multiple eligible cards; buy_minutes only adopts one automatically when the account has no default
     at all. The id must belong to a payment method already on file, from list_saved_cards; a well formed
     id this account does not own answers not found, exactly like one that is not a payment method at
-    all. Needs the billing scope AND machine billing switched on for the account in the Hushscript app;
-    either one off is a pat_scope_missing (code 2023) refusal, whichever it was.
+    all. Needs the billing scope, the token's own buy-minutes flag (set when the token is created), AND
+    machine billing switched on for the account in the Hushscript app; any one off is a
+    pat_scope_missing (code 2023) refusal, whichever it was.
 
     Args:
         body (SetDefaultCardBody):
@@ -134,8 +135,9 @@ def sync(
     multiple eligible cards; buy_minutes only adopts one automatically when the account has no default
     at all. The id must belong to a payment method already on file, from list_saved_cards; a well formed
     id this account does not own answers not found, exactly like one that is not a payment method at
-    all. Needs the billing scope AND machine billing switched on for the account in the Hushscript app;
-    either one off is a pat_scope_missing (code 2023) refusal, whichever it was.
+    all. Needs the billing scope, the token's own buy-minutes flag (set when the token is created), AND
+    machine billing switched on for the account in the Hushscript app; any one off is a
+    pat_scope_missing (code 2023) refusal, whichever it was.
 
     Args:
         body (SetDefaultCardBody):
@@ -166,8 +168,9 @@ async def asyncio_detailed(
     multiple eligible cards; buy_minutes only adopts one automatically when the account has no default
     at all. The id must belong to a payment method already on file, from list_saved_cards; a well formed
     id this account does not own answers not found, exactly like one that is not a payment method at
-    all. Needs the billing scope AND machine billing switched on for the account in the Hushscript app;
-    either one off is a pat_scope_missing (code 2023) refusal, whichever it was.
+    all. Needs the billing scope, the token's own buy-minutes flag (set when the token is created), AND
+    machine billing switched on for the account in the Hushscript app; any one off is a
+    pat_scope_missing (code 2023) refusal, whichever it was.
 
     Args:
         body (SetDefaultCardBody):
@@ -201,8 +204,9 @@ async def asyncio(
     multiple eligible cards; buy_minutes only adopts one automatically when the account has no default
     at all. The id must belong to a payment method already on file, from list_saved_cards; a well formed
     id this account does not own answers not found, exactly like one that is not a payment method at
-    all. Needs the billing scope AND machine billing switched on for the account in the Hushscript app;
-    either one off is a pat_scope_missing (code 2023) refusal, whichever it was.
+    all. Needs the billing scope, the token's own buy-minutes flag (set when the token is created), AND
+    machine billing switched on for the account in the Hushscript app; any one off is a
+    pat_scope_missing (code 2023) refusal, whichever it was.
 
     Args:
         body (SetDefaultCardBody):

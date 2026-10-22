@@ -14,7 +14,8 @@ class AgentClaimResponse:
     """
     Attributes:
         user_id (str): The account created by this claim. There is no login path for it; authenticate with pat instead.
-        pat (str): Returned exactly once. Only its hash is stored; there is no way to recover it later.
+        pat (str): Only its hash is stored; there is no way to recover it later. A retry of the claim while this token
+            is unused and within one hour of the mint returns a new token for the same account.
         scopes (list[str]): The scopes carried by pat.
         balance_seconds (int): The account's balance immediately after the pack this signup paid for was granted.
     """

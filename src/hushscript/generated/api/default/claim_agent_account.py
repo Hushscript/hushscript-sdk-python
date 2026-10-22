@@ -94,12 +94,21 @@ def sync_detailed(
 
      Exchanges a paid, unclaimed agent signup for the account it pays for. Presents the claim_secret
     returned once by POST /v1/agent/accounts; a wrong secret, an unknown signup_id, an already claimed
-    signup, a refunded signup, and an expired signup all answer the identical agent_claim_invalid error
-    so a caller can never learn which of those is true. Only once that secret checks out does payment
-    state matter: a signup whose Checkout Session has not settled to paid answers wrong_state instead. A
-    successful claim is single use; creates exactly one account with a synthetic, unresolvable login
-    identity; grants the paid pack once, never twice, even on a retried request; and mints exactly one
-    personal access token with the account's own agent scopes, returned only in this response.
+    signup whose token can no longer be re-minted, a refunded signup, and an expired signup all answer
+    the identical agent_claim_invalid error so a caller can never learn which of those is true. Only
+    once that secret checks out does payment state matter: a signup whose Checkout Session has not
+    settled to paid answers wrong_state instead. A successful claim creates exactly one account with a
+    synthetic, unresolvable login identity, grants the paid pack once, never twice, even on a retried
+    request, and mints one personal access token with the account's own agent scopes. Only the token's
+    hash is stored. If the 201 is lost, repeat the request with the same claim_secret: while that token
+    has not yet made a successful request, and for up to one hour after it was minted, the retry answers
+    201 with the same user_id, no second pack grant and a NEW token for the same account; the lost token
+    stops working. Making one successful call with the new token ends the window, and the same request
+    then answers agent_claim_invalid again. A late-landing earlier retry can replace the secret of the
+    token you hold, so make that one call right away, and if it answers 401 within the hour, repeat the
+    claim. A retry that overlaps a first claim still in flight answers rate_limited with Retry-After: 2
+    or re-mints. Until the token is first used or one hour has passed, the claim_secret works as a
+    credential for the account, so keep it private.
 
     Args:
         signup_id (str):
@@ -135,12 +144,21 @@ def sync(
 
      Exchanges a paid, unclaimed agent signup for the account it pays for. Presents the claim_secret
     returned once by POST /v1/agent/accounts; a wrong secret, an unknown signup_id, an already claimed
-    signup, a refunded signup, and an expired signup all answer the identical agent_claim_invalid error
-    so a caller can never learn which of those is true. Only once that secret checks out does payment
-    state matter: a signup whose Checkout Session has not settled to paid answers wrong_state instead. A
-    successful claim is single use; creates exactly one account with a synthetic, unresolvable login
-    identity; grants the paid pack once, never twice, even on a retried request; and mints exactly one
-    personal access token with the account's own agent scopes, returned only in this response.
+    signup whose token can no longer be re-minted, a refunded signup, and an expired signup all answer
+    the identical agent_claim_invalid error so a caller can never learn which of those is true. Only
+    once that secret checks out does payment state matter: a signup whose Checkout Session has not
+    settled to paid answers wrong_state instead. A successful claim creates exactly one account with a
+    synthetic, unresolvable login identity, grants the paid pack once, never twice, even on a retried
+    request, and mints one personal access token with the account's own agent scopes. Only the token's
+    hash is stored. If the 201 is lost, repeat the request with the same claim_secret: while that token
+    has not yet made a successful request, and for up to one hour after it was minted, the retry answers
+    201 with the same user_id, no second pack grant and a NEW token for the same account; the lost token
+    stops working. Making one successful call with the new token ends the window, and the same request
+    then answers agent_claim_invalid again. A late-landing earlier retry can replace the secret of the
+    token you hold, so make that one call right away, and if it answers 401 within the hour, repeat the
+    claim. A retry that overlaps a first claim still in flight answers rate_limited with Retry-After: 2
+    or re-mints. Until the token is first used or one hour has passed, the claim_secret works as a
+    credential for the account, so keep it private.
 
     Args:
         signup_id (str):
@@ -171,12 +189,21 @@ async def asyncio_detailed(
 
      Exchanges a paid, unclaimed agent signup for the account it pays for. Presents the claim_secret
     returned once by POST /v1/agent/accounts; a wrong secret, an unknown signup_id, an already claimed
-    signup, a refunded signup, and an expired signup all answer the identical agent_claim_invalid error
-    so a caller can never learn which of those is true. Only once that secret checks out does payment
-    state matter: a signup whose Checkout Session has not settled to paid answers wrong_state instead. A
-    successful claim is single use; creates exactly one account with a synthetic, unresolvable login
-    identity; grants the paid pack once, never twice, even on a retried request; and mints exactly one
-    personal access token with the account's own agent scopes, returned only in this response.
+    signup whose token can no longer be re-minted, a refunded signup, and an expired signup all answer
+    the identical agent_claim_invalid error so a caller can never learn which of those is true. Only
+    once that secret checks out does payment state matter: a signup whose Checkout Session has not
+    settled to paid answers wrong_state instead. A successful claim creates exactly one account with a
+    synthetic, unresolvable login identity, grants the paid pack once, never twice, even on a retried
+    request, and mints one personal access token with the account's own agent scopes. Only the token's
+    hash is stored. If the 201 is lost, repeat the request with the same claim_secret: while that token
+    has not yet made a successful request, and for up to one hour after it was minted, the retry answers
+    201 with the same user_id, no second pack grant and a NEW token for the same account; the lost token
+    stops working. Making one successful call with the new token ends the window, and the same request
+    then answers agent_claim_invalid again. A late-landing earlier retry can replace the secret of the
+    token you hold, so make that one call right away, and if it answers 401 within the hour, repeat the
+    claim. A retry that overlaps a first claim still in flight answers rate_limited with Retry-After: 2
+    or re-mints. Until the token is first used or one hour has passed, the claim_secret works as a
+    credential for the account, so keep it private.
 
     Args:
         signup_id (str):
@@ -210,12 +237,21 @@ async def asyncio(
 
      Exchanges a paid, unclaimed agent signup for the account it pays for. Presents the claim_secret
     returned once by POST /v1/agent/accounts; a wrong secret, an unknown signup_id, an already claimed
-    signup, a refunded signup, and an expired signup all answer the identical agent_claim_invalid error
-    so a caller can never learn which of those is true. Only once that secret checks out does payment
-    state matter: a signup whose Checkout Session has not settled to paid answers wrong_state instead. A
-    successful claim is single use; creates exactly one account with a synthetic, unresolvable login
-    identity; grants the paid pack once, never twice, even on a retried request; and mints exactly one
-    personal access token with the account's own agent scopes, returned only in this response.
+    signup whose token can no longer be re-minted, a refunded signup, and an expired signup all answer
+    the identical agent_claim_invalid error so a caller can never learn which of those is true. Only
+    once that secret checks out does payment state matter: a signup whose Checkout Session has not
+    settled to paid answers wrong_state instead. A successful claim creates exactly one account with a
+    synthetic, unresolvable login identity, grants the paid pack once, never twice, even on a retried
+    request, and mints one personal access token with the account's own agent scopes. Only the token's
+    hash is stored. If the 201 is lost, repeat the request with the same claim_secret: while that token
+    has not yet made a successful request, and for up to one hour after it was minted, the retry answers
+    201 with the same user_id, no second pack grant and a NEW token for the same account; the lost token
+    stops working. Making one successful call with the new token ends the window, and the same request
+    then answers agent_claim_invalid again. A late-landing earlier retry can replace the secret of the
+    token you hold, so make that one call right away, and if it answers 401 within the hour, repeat the
+    claim. A retry that overlaps a first claim still in flight answers rate_limited with Retry-After: 2
+    or re-mints. Until the token is first used or one hour has passed, the claim_secret works as a
+    credential for the account, so keep it private.
 
     Args:
         signup_id (str):

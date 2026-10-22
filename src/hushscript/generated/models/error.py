@@ -35,7 +35,7 @@ class Error:
             limits (UploadLimits | Unset): The caller's current upload admission limits, shared by every response that
                 carries them.
             details (ErrorDetails | Unset): Structured recovery detail for an error that is not a plain balance shortfall.
-                Present on agent_pack_locked and agent_purchase_capped.
+                Present on agent_pack_locked, agent_purchase_capped and policy_version_stale.
     """
 
     error: str

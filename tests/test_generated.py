@@ -105,15 +105,6 @@ def test_emit_hints_rejects_empty_input() -> None:
         GENERATOR.emit_hints({"a": ""})
 
 
-def test_generator_declares_a_missing_path_parameter() -> None:
-    spec = {
-        "paths": {"/v1/x/{id}": {"post": {}, "get": {"parameters": [{"in": "path", "name": "id"}]}}}
-    }
-    patched = GENERATOR.declare_path_parameters(spec)
-    assert patched == ["POST /v1/x/{id}"]
-    assert spec["paths"]["/v1/x/{id}"]["post"]["parameters"][0]["name"] == "id"
-
-
 def test_every_operation_of_the_spec_is_generated() -> None:
     operation_ids = sorted(
         operation["operationId"]

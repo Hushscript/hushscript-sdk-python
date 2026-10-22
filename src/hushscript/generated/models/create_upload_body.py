@@ -21,7 +21,7 @@ T = TypeVar("T", bound="CreateUploadBody")
 class CreateUploadBody:
     """
     Attributes:
-        size_bytes (int): The exact declared byte size of the audio file, up to the 5 GB cap.
+        size_bytes (int): The exact declared byte size of the audio file, from 1 byte up to the 5 GB cap.
         duration_seconds (int): The declared duration in seconds, from 15 seconds up to the 10 hour cap. Rechecked
             against the probed exact duration at complete_upload.
         title (None | str | Unset): An optional display title. A value longer than 300 bytes is truncated on a character
