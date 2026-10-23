@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/Hushscript/hushscript-sdk-python/compare/v1.0.0...v1.1.0) (2026-10-23)
+
+
+### Features
+
+* sync with the api spec ([801a89e](https://github.com/Hushscript/hushscript-sdk-python/commit/801a89e899d962ef4d551b34503593ab48d1c3df))
+
 ## 1.0.0 (2026-10-13)
 
 
