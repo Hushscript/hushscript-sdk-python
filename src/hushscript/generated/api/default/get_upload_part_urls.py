@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any, cast
+from typing import Any
 from urllib.parse import quote
 
 import httpx
@@ -7,9 +7,7 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.error import Error
-from ...models.get_upload_part_urls_response_200_type_0 import (
-    GetUploadPartUrlsResponse200Type0,
-)
+from ...models.get_upload_part_urls_response_200 import GetUploadPartUrlsResponse200
 from ...types import UNSET, Response, Unset
 
 
@@ -38,25 +36,9 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Error | GetUploadPartUrlsResponse200Type0 | None | None:
+) -> Error | GetUploadPartUrlsResponse200 | None:
     if response.status_code == 200:
-
-        def _parse_response_200(
-            data: object,
-        ) -> GetUploadPartUrlsResponse200Type0 | None:
-            if data is None:
-                return data
-            try:
-                if not isinstance(data, dict):
-                    raise TypeError()
-                response_200_type_0 = GetUploadPartUrlsResponse200Type0.from_dict(data)
-
-                return response_200_type_0
-            except (TypeError, ValueError, AttributeError, KeyError):
-                pass
-            return cast(GetUploadPartUrlsResponse200Type0 | None, data)
-
-        response_200 = _parse_response_200(response.json())
+        response_200 = GetUploadPartUrlsResponse200.from_dict(response.json())
 
         return response_200
 
@@ -103,7 +85,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[Error | GetUploadPartUrlsResponse200Type0 | None]:
+) -> Response[Error | GetUploadPartUrlsResponse200]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -117,12 +99,13 @@ def sync_detailed(
     *,
     client: AuthenticatedClient,
     start: int | Unset = 1,
-) -> Response[Error | GetUploadPartUrlsResponse200Type0 | None]:
+) -> Response[Error | GetUploadPartUrlsResponse200]:
     """Fetch a page of presigned direct-to-R2 part URLs
 
      Returns a fresh page of presigned PUT URLs for the given job's direct-to-R2 upload, starting at the
     requested part number. Presigned URLs expire, so a client resuming a stalled transfer should call
-    this again rather than reusing URLs from create_upload's response.
+    this again rather than reusing URLs from create_upload's response. Answers 404 when direct-to-R2
+    uploads are not available for the job; send the parts through upload_part then.
 
     Args:
         job (str):
@@ -133,7 +116,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Error | GetUploadPartUrlsResponse200Type0 | None]
+        Response[Error | GetUploadPartUrlsResponse200]
     """
 
     kwargs = _get_kwargs(
@@ -153,12 +136,13 @@ def sync(
     *,
     client: AuthenticatedClient,
     start: int | Unset = 1,
-) -> Error | GetUploadPartUrlsResponse200Type0 | None | None:
+) -> Error | GetUploadPartUrlsResponse200 | None:
     """Fetch a page of presigned direct-to-R2 part URLs
 
      Returns a fresh page of presigned PUT URLs for the given job's direct-to-R2 upload, starting at the
     requested part number. Presigned URLs expire, so a client resuming a stalled transfer should call
-    this again rather than reusing URLs from create_upload's response.
+    this again rather than reusing URLs from create_upload's response. Answers 404 when direct-to-R2
+    uploads are not available for the job; send the parts through upload_part then.
 
     Args:
         job (str):
@@ -169,7 +153,7 @@ def sync(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Error | GetUploadPartUrlsResponse200Type0 | None
+        Error | GetUploadPartUrlsResponse200
     """
 
     return sync_detailed(
@@ -184,12 +168,13 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient,
     start: int | Unset = 1,
-) -> Response[Error | GetUploadPartUrlsResponse200Type0 | None]:
+) -> Response[Error | GetUploadPartUrlsResponse200]:
     """Fetch a page of presigned direct-to-R2 part URLs
 
      Returns a fresh page of presigned PUT URLs for the given job's direct-to-R2 upload, starting at the
     requested part number. Presigned URLs expire, so a client resuming a stalled transfer should call
-    this again rather than reusing URLs from create_upload's response.
+    this again rather than reusing URLs from create_upload's response. Answers 404 when direct-to-R2
+    uploads are not available for the job; send the parts through upload_part then.
 
     Args:
         job (str):
@@ -200,7 +185,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Error | GetUploadPartUrlsResponse200Type0 | None]
+        Response[Error | GetUploadPartUrlsResponse200]
     """
 
     kwargs = _get_kwargs(
@@ -218,12 +203,13 @@ async def asyncio(
     *,
     client: AuthenticatedClient,
     start: int | Unset = 1,
-) -> Error | GetUploadPartUrlsResponse200Type0 | None | None:
+) -> Error | GetUploadPartUrlsResponse200 | None:
     """Fetch a page of presigned direct-to-R2 part URLs
 
      Returns a fresh page of presigned PUT URLs for the given job's direct-to-R2 upload, starting at the
     requested part number. Presigned URLs expire, so a client resuming a stalled transfer should call
-    this again rather than reusing URLs from create_upload's response.
+    this again rather than reusing URLs from create_upload's response. Answers 404 when direct-to-R2
+    uploads are not available for the job; send the parts through upload_part then.
 
     Args:
         job (str):
@@ -234,7 +220,7 @@ async def asyncio(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Error | GetUploadPartUrlsResponse200Type0 | None
+        Error | GetUploadPartUrlsResponse200
     """
 
     return (

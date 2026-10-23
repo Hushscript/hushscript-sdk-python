@@ -69,11 +69,10 @@ def sync_detailed(
     *,
     client: AuthenticatedClient,
 ) -> Response[AccountResponse | Error]:
-    """Read the account's balance, expiry and upload admission limits
+    """Read the account's balance and upload admission limits
 
-     Returns the caller's net credit balance, when that balance is next scheduled to expire without a
-    completed transcription or purchase, whether a card is on file, the account's data region, and the
-    account's current daily-minutes and concurrent-jobs limits. Call this before create_upload to
+     Returns the caller's net credit balance, whether a card is on file, the account's data region, and
+    the account's current daily-minutes and concurrent-jobs limits. Call this before create_upload to
     confirm there is enough balance and daily headroom for the upload about to be attempted.
 
     Raises:
@@ -97,11 +96,10 @@ def sync(
     *,
     client: AuthenticatedClient,
 ) -> AccountResponse | Error | None:
-    """Read the account's balance, expiry and upload admission limits
+    """Read the account's balance and upload admission limits
 
-     Returns the caller's net credit balance, when that balance is next scheduled to expire without a
-    completed transcription or purchase, whether a card is on file, the account's data region, and the
-    account's current daily-minutes and concurrent-jobs limits. Call this before create_upload to
+     Returns the caller's net credit balance, whether a card is on file, the account's data region, and
+    the account's current daily-minutes and concurrent-jobs limits. Call this before create_upload to
     confirm there is enough balance and daily headroom for the upload about to be attempted.
 
     Raises:
@@ -121,11 +119,10 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient,
 ) -> Response[AccountResponse | Error]:
-    """Read the account's balance, expiry and upload admission limits
+    """Read the account's balance and upload admission limits
 
-     Returns the caller's net credit balance, when that balance is next scheduled to expire without a
-    completed transcription or purchase, whether a card is on file, the account's data region, and the
-    account's current daily-minutes and concurrent-jobs limits. Call this before create_upload to
+     Returns the caller's net credit balance, whether a card is on file, the account's data region, and
+    the account's current daily-minutes and concurrent-jobs limits. Call this before create_upload to
     confirm there is enough balance and daily headroom for the upload about to be attempted.
 
     Raises:
@@ -147,11 +144,10 @@ async def asyncio(
     *,
     client: AuthenticatedClient,
 ) -> AccountResponse | Error | None:
-    """Read the account's balance, expiry and upload admission limits
+    """Read the account's balance and upload admission limits
 
-     Returns the caller's net credit balance, when that balance is next scheduled to expire without a
-    completed transcription or purchase, whether a card is on file, the account's data region, and the
-    account's current daily-minutes and concurrent-jobs limits. Call this before create_upload to
+     Returns the caller's net credit balance, whether a card is on file, the account's data region, and
+    the account's current daily-minutes and concurrent-jobs limits. Call this before create_upload to
     confirm there is enough balance and daily headroom for the upload about to be attempted.
 
     Raises:

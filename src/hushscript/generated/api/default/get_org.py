@@ -71,10 +71,10 @@ def sync_detailed(
 ) -> Response[Error | OrgSummaryResponse]:
     """Read the caller's organization summary
 
-     A pure passthrough of GET /api/org's body: plan state and term, pool balance and expiry, retention
-    policy, tax id, auto-renewal source and failure count, the workspace-wide default per-member cap,
-    and the caller's own effective cap and month-to-date spend against the pool. Membership only, not
-    admin -- renewal_user_id is visible to admins only.
+     A pure passthrough of GET /api/org's body: plan state and term, pool balance, retention policy, tax
+    id, auto-renewal source and failure count, the workspace-wide default per-member cap, and the
+    caller's own effective cap and month-to-date spend against the pool. Membership only, not admin --
+    renewal_user_id is visible to admins only.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -99,10 +99,10 @@ def sync(
 ) -> Error | OrgSummaryResponse | None:
     """Read the caller's organization summary
 
-     A pure passthrough of GET /api/org's body: plan state and term, pool balance and expiry, retention
-    policy, tax id, auto-renewal source and failure count, the workspace-wide default per-member cap,
-    and the caller's own effective cap and month-to-date spend against the pool. Membership only, not
-    admin -- renewal_user_id is visible to admins only.
+     A pure passthrough of GET /api/org's body: plan state and term, pool balance, retention policy, tax
+    id, auto-renewal source and failure count, the workspace-wide default per-member cap, and the
+    caller's own effective cap and month-to-date spend against the pool. Membership only, not admin --
+    renewal_user_id is visible to admins only.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -123,10 +123,10 @@ async def asyncio_detailed(
 ) -> Response[Error | OrgSummaryResponse]:
     """Read the caller's organization summary
 
-     A pure passthrough of GET /api/org's body: plan state and term, pool balance and expiry, retention
-    policy, tax id, auto-renewal source and failure count, the workspace-wide default per-member cap,
-    and the caller's own effective cap and month-to-date spend against the pool. Membership only, not
-    admin -- renewal_user_id is visible to admins only.
+     A pure passthrough of GET /api/org's body: plan state and term, pool balance, retention policy, tax
+    id, auto-renewal source and failure count, the workspace-wide default per-member cap, and the
+    caller's own effective cap and month-to-date spend against the pool. Membership only, not admin --
+    renewal_user_id is visible to admins only.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -149,10 +149,10 @@ async def asyncio(
 ) -> Error | OrgSummaryResponse | None:
     """Read the caller's organization summary
 
-     A pure passthrough of GET /api/org's body: plan state and term, pool balance and expiry, retention
-    policy, tax id, auto-renewal source and failure count, the workspace-wide default per-member cap,
-    and the caller's own effective cap and month-to-date spend against the pool. Membership only, not
-    admin -- renewal_user_id is visible to admins only.
+     A pure passthrough of GET /api/org's body: plan state and term, pool balance, retention policy, tax
+    id, auto-renewal source and failure count, the workspace-wide default per-member cap, and the
+    caller's own effective cap and month-to-date spend against the pool. Membership only, not admin --
+    renewal_user_id is visible to admins only.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

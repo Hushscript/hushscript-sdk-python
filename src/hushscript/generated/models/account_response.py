@@ -6,6 +6,8 @@ from typing import TYPE_CHECKING, Any, TypeVar, cast
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
+from ..types import UNSET, Unset
+
 if TYPE_CHECKING:
     from ..models.upload_limits import UploadLimits
 
@@ -19,11 +21,13 @@ class AccountResponse:
     Attributes:
         balance_seconds (int): Net balance in seconds: the raw balance minus any clawback debt. May be negative.
         held_seconds (int): Seconds currently committed to in-flight jobs and not yet settled.
-        credits_expire_at (int | None): Unix seconds after which the balance expires without a completed transcription
-            or purchase, or null if no expiry is currently armed.
+        credits_expire_at (int | None): Always null; minutes do not expire. Retained for compatibility until the next
+            SDK major version.
         card_on_file (bool):
         data_region (str): The region this account's data lives in, e.g. us, eu, apac or oc.
         limits (UploadLimits): The caller's current upload admission limits, shared by every response that carries them.
+        purchases_remaining_in_window (int | Unset): Agent accounts only: how many purchases are still available in the
+            current rolling window, never below 0. Absent for human accounts.
     """
 
     balance_seconds: int
@@ -32,6 +36,7 @@ class AccountResponse:
     card_on_file: bool
     data_region: str
     limits: UploadLimits
+    purchases_remaining_in_window: int | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -48,6 +53,8 @@ class AccountResponse:
 
         limits = self.limits.to_dict()
 
+        purchases_remaining_in_window = self.purchases_remaining_in_window
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -60,6 +67,8 @@ class AccountResponse:
                 "limits": limits,
             }
         )
+        if purchases_remaining_in_window is not UNSET:
+            field_dict["purchases_remaining_in_window"] = purchases_remaining_in_window
 
         return field_dict
 
@@ -85,6 +94,8 @@ class AccountResponse:
 
         limits = UploadLimits.from_dict(d.pop("limits"))
 
+        purchases_remaining_in_window = d.pop("purchases_remaining_in_window", UNSET)
+
         account_response = cls(
             balance_seconds=balance_seconds,
             held_seconds=held_seconds,
@@ -92,6 +103,7 @@ class AccountResponse:
             card_on_file=card_on_file,
             data_region=data_region,
             limits=limits,
+            purchases_remaining_in_window=purchases_remaining_in_window,
         )
 
         account_response.additional_properties = d

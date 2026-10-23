@@ -444,7 +444,7 @@ just test 3.14          # unit tests with coverage on one interpreter
 just lint               # every static check
 just examples           # every program in examples/ against the conformance mock
 just build              # sdist and wheel, twine and wheel-contents checks, install on the default interpreter (3.10)
-just regen              # regenerate openapi.json and src/hushscript/generated from the production spec
+just regen              # regenerate openapi.json and src/hushscript/generated from the production spec; run it by hand when the API changes
 ```
 
 The conformance mock is built from the `hushscript-sdk-conformance` repository at the tag or commit in

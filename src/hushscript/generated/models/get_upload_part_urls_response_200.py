@@ -10,13 +10,13 @@ if TYPE_CHECKING:
     from ..models.presigned_part_url import PresignedPartUrl
 
 
-T = TypeVar("T", bound="GetUploadPartUrlsResponse200Type0")
+T = TypeVar("T", bound="GetUploadPartUrlsResponse200")
 
 
 @_attrs_define
-class GetUploadPartUrlsResponse200Type0:
-    """One page of presigned direct-to-R2 PUT URLs, or null when direct-to-R2 uploads are not available for this job and
-    parts must be sent to upload_part instead.
+class GetUploadPartUrlsResponse200:
+    """One page of presigned direct-to-R2 PUT URLs. This body is never null: when direct-to-R2 uploads are not available
+    for this job the response is 404 instead, and parts must be sent to upload_part.
 
         Attributes:
             part_size_bytes (int): The byte size of every part except the last.
@@ -81,15 +81,15 @@ class GetUploadPartUrlsResponse200Type0:
 
         next_part_number = _parse_next_part_number(d.pop("next_part_number"))
 
-        get_upload_part_urls_response_200_type_0 = cls(
+        get_upload_part_urls_response_200 = cls(
             part_size_bytes=part_size_bytes,
             total_parts=total_parts,
             part_urls=part_urls,
             next_part_number=next_part_number,
         )
 
-        get_upload_part_urls_response_200_type_0.additional_properties = d
-        return get_upload_part_urls_response_200_type_0
+        get_upload_part_urls_response_200.additional_properties = d
+        return get_upload_part_urls_response_200
 
     @property
     def additional_keys(self) -> list[str]:

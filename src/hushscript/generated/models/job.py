@@ -32,7 +32,7 @@ class Job:
     """
     Attributes:
         id (str):
-        state (str): One of uploading, fetching, queued, processing, done or failed.
+        state (str): One of uploading, fetching, queued, processing, awaiting_unlock, done or failed.
         mode (str):
         declared_seconds (int):
         verified_seconds (int | None): The probed exact duration, once known.

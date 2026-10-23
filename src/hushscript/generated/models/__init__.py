@@ -34,7 +34,7 @@ from .dictionary_entry import DictionaryEntry
 from .dictionary_entry_category import DictionaryEntryCategory
 from .error import Error
 from .error_details import ErrorDetails
-from .get_upload_part_urls_response_200_type_0 import GetUploadPartUrlsResponse200Type0
+from .get_upload_part_urls_response_200 import GetUploadPartUrlsResponse200
 from .heartbeat_upload_response_200 import HeartbeatUploadResponse200
 from .holds_response import HoldsResponse
 from .job import Job
@@ -128,7 +128,7 @@ __all__ = (
     "DictionaryEntryCategory",
     "Error",
     "ErrorDetails",
-    "GetUploadPartUrlsResponse200Type0",
+    "GetUploadPartUrlsResponse200",
     "HeartbeatUploadResponse200",
     "HoldsResponse",
     "Job",
