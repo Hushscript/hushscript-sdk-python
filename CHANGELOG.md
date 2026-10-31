@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/Hushscript/hushscript-sdk-python/compare/v1.1.0...v1.1.1) (2026-10-31)
+
+
+### Bug Fixes
+
+* **deps:** update dependencies to latest ([f74c0d8](https://github.com/Hushscript/hushscript-sdk-python/commit/f74c0d8ab32ed86d50345c4b3b453f87dde15e47))
+
 ## [1.1.0](https://github.com/Hushscript/hushscript-sdk-python/compare/v1.0.0...v1.1.0) (2026-10-23)
 
 
