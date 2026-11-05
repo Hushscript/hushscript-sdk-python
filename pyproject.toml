@@ -59,7 +59,8 @@ dev = [
   "ruff==0.17.3",
   "deptry==0.25.1",
   "mutmut==3.8.1; python_version >= '3.11'",
-  "pip-audit==2.10.1",
+  # pip-audit runs on the newest Python only; on 3.10 it pinned a vulnerable filelock.
+  "pip-audit==2.10.1; python_version >= '3.11'",
   "check-wheel-contents==0.6.3",
   "twine==7.0.0",
   "hatchling==1.33.0",
