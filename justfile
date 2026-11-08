@@ -34,7 +34,7 @@ test version=floor:
     docker compose build mock test
     docker compose run --rm ${extra[@]+"${extra[@]}"} test
 
-# mutmut on transport, transcription and billing (nightly)
+# mutmut on transport, transcription and billing (promotion PR)
 mutation version=mutation_runtime:
     #!/usr/bin/env bash
     set -euo pipefail
@@ -163,7 +163,7 @@ ci version="":
       just build "$v"
     done
 
-# nightly smoke against production; needs SMOKE_TOKEN (outbound network)
+# production smoke (promotion PR); needs SMOKE_TOKEN (outbound network)
 smoke:
     #!/usr/bin/env bash
     set -euo pipefail

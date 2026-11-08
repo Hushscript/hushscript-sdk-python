@@ -245,8 +245,8 @@ async def test_virtual_clock_cancellation_drops_the_pending_timer(
 
 
 @pytest.mark.parametrize("job", ["mutation", "fuzz"])
-def test_nightly_jobs_check_out_their_pinned_conformance_fixtures(job: str) -> None:
-    workflow = (ROOT / ".github/workflows/nightly.yml").read_text(encoding="utf-8")
+def test_promotion_jobs_check_out_their_pinned_conformance_fixtures(job: str) -> None:
+    workflow = (ROOT / ".github/workflows/promotion.yml").read_text(encoding="utf-8")
     workflow = re.sub(r"(?m)\s+#.*$", "", workflow)
     anchor = f"\n  {job}:\n"
     assert workflow.count(anchor) == 1
@@ -299,7 +299,7 @@ def test_mutation_copies_the_files_its_selected_tests_read() -> None:
         "conformance-ref",
         ".release-please-manifest.json",
         ".github/workflows/ci.yml",
-        ".github/workflows/nightly.yml",
+        ".github/workflows/promotion.yml",
         ".github/workflows/publish.yml",
     ]
     for relative in required:

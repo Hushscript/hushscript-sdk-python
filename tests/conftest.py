@@ -10,7 +10,7 @@ from hypothesis import settings
 TOKEN = "hsr1:eu:pat." + "0123456789abcdef" * 2 + "." + "fedcba9876543210" * 4
 
 settings.register_profile("default", max_examples=100, database=None, deadline=None)
-settings.register_profile("nightly", max_examples=1000, database=None, deadline=None)
+settings.register_profile("promotion", max_examples=1000, database=None, deadline=None)
 settings.load_profile(os.environ.get("HYPOTHESIS_PROFILE", "default"))
 
 
