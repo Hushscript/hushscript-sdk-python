@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/Hushscript/hushscript-sdk-python/compare/v1.1.1...v1.1.2) (2026-11-09)
+
+
+### Miscellaneous Chores
+
+* release 1.1.2 ([d101668](https://github.com/Hushscript/hushscript-sdk-python/commit/d101668023c8eb97fdcda9aa4851f13facf3d026))
+
 ## [1.1.1](https://github.com/Hushscript/hushscript-sdk-python/compare/v1.1.0...v1.1.1) (2026-10-31)
 
 
