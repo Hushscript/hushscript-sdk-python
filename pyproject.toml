@@ -64,7 +64,7 @@ dev = [
   "check-wheel-contents==0.6.3",
   "twine==7.0.0",
   "hatchling==1.33.0",
-  "cyclonedx-bom==7.6.0",
+  "cyclonedx-bom==8.0.1",
 ]
 
 [tool.hatch.build.targets.wheel]
