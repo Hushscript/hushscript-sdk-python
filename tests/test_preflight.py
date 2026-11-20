@@ -12,6 +12,7 @@ from hushscript import (
 )
 from hushscript.transcribe.preflight import (
     MAX_KEYTERM_CHARS,
+    MAX_KEYTERM_TOTAL_WORDS,
     MAX_KEYTERM_WORDS,
     MAX_KEYTERMS,
     MAX_PROMPT_CHARS,
@@ -26,15 +27,12 @@ from pipe import media
 
 MP3 = media(4000)
 
-# The API's fixed text around a prompt and key terms (the spec's 203), restated here on purpose so
-# a drift in the SDK's own count fails this file.
-COMPILED_FIXED = 203
-
 
 # The values mirror backend/src/transcription_options.rs and are restated on purpose to catch drift.
 def test_the_context_limits_equal_the_backends_values() -> None:
     assert MAX_KEYTERMS == 1000
     assert MAX_KEYTERM_WORDS == 6
+    assert MAX_KEYTERM_TOTAL_WORDS == 1000
     assert MAX_KEYTERM_CHARS == 128
     assert MAX_PROMPT_CHARS == 2000
 
@@ -48,10 +46,6 @@ def rejection(**changes: object) -> str:
         Options(**changes).validate()  # type: ignore[arg-type]
     assert raised.value.code == "invalid_option"
     return str(raised.value)
-
-
-def compiled_chars(prompt: str, terms: tuple[str, ...]) -> int:
-    return COMPILED_FIXED + len(prompt) + sum(len(term) + 2 for term in terms) + len(terms) - 1
 
 
 @pytest.mark.parametrize(
@@ -97,7 +91,7 @@ def test_the_edges_of_every_option_are_accepted() -> None:
         idempotency_key="k" * 16,
         medical=True,
         language="en_us",
-        keyterms=tuple(f"a b c d e {index}" for index in range(MAX_KEYTERMS)),
+        keyterms=tuple(f"a b c d e {index}" for index in range(MAX_KEYTERM_TOTAL_WORDS // 6)),
         matter_code="m" * 64,
     ).validate()
     Options(idempotency_key="k" * 128).validate()
@@ -325,21 +319,26 @@ def test_the_prompt_is_trimmed_before_it_is_counted() -> None:
     Options(prompt=" \u3000" + "p" * MAX_PROMPT_CHARS + "\u00a0\n").validate()
 
 
-def test_the_compiled_prompt_boundary_is_exactly_the_cap() -> None:
-    terms = ("alpha", "beta gamma", "δ" * 10)
-    prompt = "p" * (MAX_PROMPT_CHARS - compiled_chars("", terms))
-    assert compiled_chars(prompt, terms) == MAX_PROMPT_CHARS
-    Options(keyterms=terms, prompt=prompt).validate()
-    message = rejection(keyterms=terms, prompt=prompt + "p")
+def test_the_prompt_and_key_terms_are_checked_apart() -> None:
+    Options(prompt="p" * MAX_PROMPT_CHARS, keyterms=("", "  ")).validate()
+    Options(prompt="p" * MAX_PROMPT_CHARS, keyterms=unique_terms(MAX_KEYTERMS)).validate()
+    Options(keyterms=tuple(f"{index:0126d}" for index in range(MAX_KEYTERMS))).validate()
+
+
+def test_the_key_term_word_total_boundary_is_exactly_the_cap() -> None:
+    two_words = tuple(f"a{index} b" for index in range(MAX_KEYTERM_TOTAL_WORDS // 2))
+    Options(keyterms=two_words).validate()
+    message = rejection(keyterms=(*two_words, "extra"))
     assert message == (
-        f"prompt and keyterms together exceed {MAX_PROMPT_CHARS} characters"
-        f" ({MAX_PROMPT_CHARS + 1})."
+        f"keyterms has more than {MAX_KEYTERM_TOTAL_WORDS} words in total"
+        f" ({MAX_KEYTERM_TOTAL_WORDS + 1})."
     )
 
 
-def test_the_compiled_rule_does_not_apply_without_key_terms_or_without_a_prompt() -> None:
-    Options(prompt="p" * MAX_PROMPT_CHARS, keyterms=("", "  ")).validate()
-    Options(keyterms=tuple(f"{index:0126d}" for index in range(MAX_KEYTERMS))).validate()
+def test_the_word_total_counts_unique_trimmed_terms_split_on_unicode_white_space() -> None:
+    padded = tuple(f" a{index}\u3000b\u00a0c " for index in range(334))
+    assert rejection(keyterms=padded).endswith("(1002).")
+    Options(keyterms=(*padded[:333], *padded[:333], " ", "")).validate()
 
 
 def test_blank_prompt_and_blank_terms_are_omitted_from_the_wire() -> None:
@@ -357,3 +356,96 @@ def test_the_wire_carries_trimmed_unique_terms_and_the_trimmed_prompt() -> None:
 def test_the_index_names_the_term_in_the_list_the_caller_passed() -> None:
     message = rejection(keyterms=("", "a", "a", "x" * (MAX_KEYTERM_CHARS + 1)))
     assert message.startswith("keyterms[3] ")
+
+
+# Restated on purpose: these mirror backend/src/provider_language_features.rs.
+STT37 = (
+    "af", "ar", "ca", "da", "de", "de_ch", "en", "en_au", "en_uk", "en_us", "es", "et", "fa", "fi",
+    "fr", "gl", "he", "hi", "it", "ja", "ko", "mr", "nl", "nn", "no", "pt", "ro", "ru", "sv", "tr",
+    "ur", "vi", "zh",
+)  # fmt: skip
+UNIVERSAL_2 = (
+    "am", "as", "az", "ba", "be", "bg", "bn", "bo", "br", "bs", "cs", "cy", "el", "eu", "fo", "gu",
+    "ha", "haw", "hr", "ht", "hu", "hy", "id", "is", "jw", "ka", "kk", "km", "kn", "la", "lb", "ln",
+    "lo", "lt", "lv", "mg", "mi", "mk", "ml", "mn", "ms", "mt", "my", "ne", "oc", "pa", "pl", "ps",
+    "sa", "sd", "si", "sk", "sl", "sn", "so", "sq", "sr", "su", "sw", "ta", "te", "tg", "th", "tk",
+    "tl", "tt", "uk", "uz", "yi", "yo",
+)  # fmt: skip
+
+
+def language_message(option: str, language: str) -> str:
+    supported = ", ".join(STT37)
+    return (
+        f'{option} does not work for language "{language}"; it needs language to be one of '
+        f"{supported}."
+    )
+
+
+def test_the_language_lists_cover_the_103_source_languages() -> None:
+    assert len(STT37) == 33
+    assert len(UNIVERSAL_2) == 70
+    assert len({*STT37, *UNIVERSAL_2}) == 103
+
+
+@pytest.mark.parametrize("language", UNIVERSAL_2)
+def test_keyterms_are_refused_in_a_universal_2_language(language: str) -> None:
+    assert rejection(keyterms=("Hushscript",), language=language) == language_message(
+        "keyterms", language
+    )
+
+
+@pytest.mark.parametrize("language", UNIVERSAL_2)
+def test_a_prompt_is_refused_in_a_universal_2_language(language: str) -> None:
+    assert rejection(prompt="Names.", language=language) == language_message("prompt", language)
+
+
+@pytest.mark.parametrize("language", STT37)
+def test_keyterms_and_a_prompt_are_accepted_in_an_stt37_language(language: str) -> None:
+    wire = Options(keyterms=("Hushscript",), prompt="Names.", language=language).validate()
+    assert wire.transcription_options() == {
+        "language_code": language,
+        "keyterms_prompt": ["Hushscript"],
+        "prompt": "Names.",
+    }
+
+
+def test_the_key_terms_are_named_when_both_are_given_and_the_language_is_normalized() -> None:
+    assert rejection(keyterms=("x",), prompt="Names.", language=" PL ") == language_message(
+        "keyterms", "pl"
+    )
+
+
+def test_a_prompt_is_named_next_to_blank_key_terms() -> None:
+    assert rejection(keyterms=(" ", ""), prompt="Names.", language="th") == language_message(
+        "prompt", "th"
+    )
+
+
+@pytest.mark.parametrize(
+    ("changes", "wire"),
+    [
+        ({"keyterms": (" ", ""), "prompt": "  "}, {"language_code": "pl"}),
+        ({"keyterms": ()}, {"language_code": "pl"}),
+        ({"keep_disfluencies": True}, {"language_code": "pl", "keep_disfluencies": True}),
+    ],
+)
+def test_a_universal_2_language_without_context_is_not_refused(
+    changes: dict[str, object], wire: dict[str, object]
+) -> None:
+    assert Options(language="pl", **changes).validate().transcription_options() == wire  # type: ignore[arg-type]
+
+
+def test_key_terms_and_a_prompt_are_not_refused_under_auto_detect() -> None:
+    assert Options(
+        keyterms=("Hushscript",), prompt="Names."
+    ).validate().transcription_options() == {
+        "keyterms_prompt": ["Hushscript"],
+        "prompt": "Names.",
+    }
+
+
+def test_a_language_code_the_sdk_does_not_list_is_left_to_the_server() -> None:
+    assert Options(keyterms=("Hushscript",), language="xx").validate().transcription_options() == {
+        "language_code": "xx",
+        "keyterms_prompt": ["Hushscript"],
+    }
