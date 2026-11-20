@@ -111,7 +111,9 @@ def sync_detailed(
      Sends one part's raw bytes to be written into the job's in-progress R2 multipart upload. Only needed
     when direct-to-R2 presigned URLs are unavailable, or as a fallback for a part whose presigned PUT
     failed. A repeated PUT of the same part number replaces that part rather than adding to the declared
-    total, so retries are always safe.
+    total, so retries are always safe. A Content-Length header is required: the body is streamed to
+    storage and held to that length, and a part sent without one (chunked transfer) is refused with 400
+    bad_request.
 
     Args:
         job (str):
@@ -151,7 +153,9 @@ def sync(
      Sends one part's raw bytes to be written into the job's in-progress R2 multipart upload. Only needed
     when direct-to-R2 presigned URLs are unavailable, or as a fallback for a part whose presigned PUT
     failed. A repeated PUT of the same part number replaces that part rather than adding to the declared
-    total, so retries are always safe.
+    total, so retries are always safe. A Content-Length header is required: the body is streamed to
+    storage and held to that length, and a part sent without one (chunked transfer) is refused with 400
+    bad_request.
 
     Args:
         job (str):
@@ -186,7 +190,9 @@ async def asyncio_detailed(
      Sends one part's raw bytes to be written into the job's in-progress R2 multipart upload. Only needed
     when direct-to-R2 presigned URLs are unavailable, or as a fallback for a part whose presigned PUT
     failed. A repeated PUT of the same part number replaces that part rather than adding to the declared
-    total, so retries are always safe.
+    total, so retries are always safe. A Content-Length header is required: the body is streamed to
+    storage and held to that length, and a part sent without one (chunked transfer) is refused with 400
+    bad_request.
 
     Args:
         job (str):
@@ -224,7 +230,9 @@ async def asyncio(
      Sends one part's raw bytes to be written into the job's in-progress R2 multipart upload. Only needed
     when direct-to-R2 presigned URLs are unavailable, or as a fallback for a part whose presigned PUT
     failed. A repeated PUT of the same part number replaces that part rather than adding to the declared
-    total, so retries are always safe.
+    total, so retries are always safe. A Content-Length header is required: the body is streamed to
+    storage and held to that length, and a part sent without one (chunked transfer) is refused with 400
+    bad_request.
 
     Args:
         job (str):

@@ -79,6 +79,7 @@ from .set_default_card_body import SetDefaultCardBody
 from .set_default_card_response_200 import SetDefaultCardResponse200
 from .setup_session_response import SetupSessionResponse
 from .transaction import Transaction
+from .transaction_provider import TransactionProvider
 from .transactions_response import TransactionsResponse
 from .transcript_detail import TranscriptDetail
 from .transcript_detail_speaker_names import TranscriptDetailSpeakerNames
@@ -173,6 +174,7 @@ __all__ = (
     "SetDefaultCardResponse200",
     "SetupSessionResponse",
     "Transaction",
+    "TransactionProvider",
     "TransactionsResponse",
     "TranscriptDetail",
     "TranscriptDetailSpeakerNames",

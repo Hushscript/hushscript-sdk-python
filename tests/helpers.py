@@ -234,6 +234,8 @@ OPTIONS: dict[str, object] = {
     "language_code": None,
     "speaker_detection": True,
     "medical_mode": False,
+    "vet_mode": False,
+    "keep_disfluencies": False,
     "multichannel": False,
     "translation_targets": [],
     "keyterms": False,

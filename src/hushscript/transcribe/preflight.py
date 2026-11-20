@@ -33,7 +33,10 @@ MAX_KEYTERM_WORDS: Final = 6
 MAX_KEYTERM_CHARS: Final = 128
 MAX_PROMPT_CHARS: Final = 2000
 MAX_MATTER_CODE: Final = 64
-MEDICAL_LANGUAGES: Final = frozenset({"en", "es", "fr", "de"})
+# Mirrors the backend's MEDICAL_LANGUAGES (transcription_options.rs), compared exactly.
+MEDICAL_LANGUAGES: Final = frozenset({"en", "en_au", "en_uk", "en_us", "es", "fr", "de", "de_ch"})
+# Mirrors the backend's VET_LANGUAGES (transcription_options.rs), compared exactly.
+VET_LANGUAGES: Final = frozenset({"en", "en_au", "en_uk", "en_us", "es", "fr", "de", "de_ch"})
 KEY_MIN: Final = 16
 KEY_MAX: Final = 128
 _PRINTABLE_FIRST: Final = 0x21
@@ -124,6 +127,8 @@ class Options:
     keyterms: tuple[str, ...] = ()
     prompt: str | None = None
     medical: bool = False
+    vet: bool = False
+    keep_disfluencies: bool = False
     multichannel: bool = False
     auto_insights: bool | None = None
     matter_code: str | None = None
@@ -155,8 +160,16 @@ class Options:
                 f"idempotency_key must be {KEY_MIN} to {KEY_MAX} visible ASCII characters,"
                 " no spaces."
             )
+        if self.medical and self.vet:
+            raise invalid_option("medical and vet cannot be used together.")
         if self.medical and self.language not in MEDICAL_LANGUAGES:
-            raise invalid_option("medical needs language to be one of en, es, fr, de.")
+            raise invalid_option(
+                f"medical needs language to be one of {', '.join(sorted(MEDICAL_LANGUAGES))}."
+            )
+        if self.vet and self.language not in VET_LANGUAGES:
+            raise invalid_option(
+                f"vet needs language to be one of {', '.join(sorted(VET_LANGUAGES))}."
+            )
         _check_context(_clean_keyterms(self.keyterms), _clean_prompt(self.prompt))
         if self.matter_code is not None and len(self.matter_code) > MAX_MATTER_CODE:
             raise invalid_option(f"matter_code must be at most {MAX_MATTER_CODE} characters.")
@@ -179,13 +192,19 @@ class Options:
         prompt = _clean_prompt(self.prompt)
         if prompt is not None:
             wire["prompt"] = prompt
-        if self.medical:
-            wire["medical_mode"] = True
-        if self.multichannel:
-            wire["multichannel"] = True
+        wire.update(self._set_flags())
         if self.auto_insights is not None:
             wire["auto_generate_insights"] = self.auto_insights
         return wire
+
+    def _set_flags(self) -> dict[str, object]:
+        flags = {
+            "medical_mode": self.medical,
+            "vet_mode": self.vet,
+            "keep_disfluencies": self.keep_disfluencies,
+            "multichannel": self.multichannel,
+        }
+        return {key: True for key, on in flags.items() if on}
 
 
 @dataclass(frozen=True, slots=True)

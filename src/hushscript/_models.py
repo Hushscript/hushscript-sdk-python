@@ -50,6 +50,8 @@ class JobOptions(ExtraFields):
     """The forced language, or None when it was auto-detected."""
     speaker_detection: bool
     medical_mode: bool
+    vet_mode: bool
+    keep_disfluencies: bool
     multichannel: bool
     translation_targets: list[str]
     keyterms: bool
@@ -124,6 +126,8 @@ class Job(ExtraFields):
                     "language_code",
                     "speaker_detection",
                     "medical_mode",
+                    "vet_mode",
+                    "keep_disfluencies",
                     "multichannel",
                     "translation_targets",
                     "keyterms",
@@ -133,6 +137,8 @@ class Job(ExtraFields):
                 language_code=maybe_text(options["language_code"]),
                 speaker_detection=as_flag(options["speaker_detection"]),
                 medical_mode=as_flag(options["medical_mode"]),
+                vet_mode=as_flag(options["vet_mode"]),
+                keep_disfluencies=as_flag(options["keep_disfluencies"]),
                 multichannel=as_flag(options["multichannel"]),
                 translation_targets=[
                     as_text(t) for t in as_list(options["translation_targets"]) or []
