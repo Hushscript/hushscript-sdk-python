@@ -72,6 +72,11 @@ def compiled_chars(prompt: str, terms: tuple[str, ...]) -> int:
         {"idempotency_key": "tab\there-and-more-chars"},
         {"medical": True},
         {"medical": True, "language": "ja"},
+        {"medical": True, "language": "en_xx"},
+        {"medical": True, "language": "EN"},
+        {"vet": True},
+        {"vet": True, "language": "en"},
+        {"medical": True, "vet": True, "language": "en"},
         {"keyterms": unique_terms(MAX_KEYTERMS + 1)},
         {"keyterms": ("one two three four five six seven",)},
         {"matter_code": "m" * 65},
@@ -91,11 +96,34 @@ def test_the_edges_of_every_option_are_accepted() -> None:
         duration_seconds=15,
         idempotency_key="k" * 16,
         medical=True,
-        language="de",
+        language="en_us",
         keyterms=tuple(f"a b c d e {index}" for index in range(MAX_KEYTERMS)),
         matter_code="m" * 64,
     ).validate()
     Options(idempotency_key="k" * 128).validate()
+
+
+@pytest.mark.parametrize("language", ["en", "en_au", "en_uk", "en_us", "es", "fr", "de", "de_ch"])
+def test_every_medical_language_of_the_backend_is_accepted(language: str) -> None:
+    Options(medical=True, language=language).validate()
+
+
+def test_vet_is_refused_until_its_language_list_names_the_language(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    with pytest.raises(PreflightError):
+        Options(vet=True, language="en").validate()
+    monkeypatch.setattr("hushscript.transcribe.preflight.VET_LANGUAGES", frozenset({"en"}))
+    assert Options(vet=True, language="en").validate().transcription_options() == {
+        "language_code": "en",
+        "vet_mode": True,
+    }
+
+
+def test_keep_disfluencies_needs_no_language() -> None:
+    assert Options(keep_disfluencies=True).validate().transcription_options() == {
+        "keep_disfluencies": True
+    }
 
 
 def test_a_key_is_minted_once_and_a_given_one_is_kept() -> None:
@@ -113,6 +141,7 @@ def test_the_wire_options_carry_only_what_was_set() -> None:
         keyterms=("a", "b"),
         prompt="p",
         medical=True,
+        keep_disfluencies=True,
         multichannel=True,
         auto_insights=False,
     ).transcription_options()
@@ -122,6 +151,7 @@ def test_the_wire_options_carry_only_what_was_set() -> None:
         "keyterms_prompt": ["a", "b"],
         "prompt": "p",
         "medical_mode": True,
+        "keep_disfluencies": True,
         "multichannel": True,
         "auto_generate_insights": False,
     }

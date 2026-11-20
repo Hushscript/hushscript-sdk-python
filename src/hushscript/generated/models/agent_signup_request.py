@@ -23,8 +23,9 @@ class AgentSignupRequest:
         contact_email (str): Address for receipts and notices only. Never used to sign in; the created account has no
             login path of its own.
         pack_id (str): Which minute pack to buy. See GET /v1/billing/packs for the catalogue.
-        accept_terms_version (str): Must equal the server's current policy version or the request is refused with
-            policy_version_stale, which names the current value.
+        accept_terms_version (str): Must be the server's current policy version or, for 30 days after the current
+            version's date, the previous one; otherwise the request is refused with policy_version_stale, which names the
+            current value.
         agent (AgentSignupRequestAgent):
         data_region (str | Unset): Optional region hint. Honored only when it agrees with the region derived from your
             network location; otherwise the derived region is used silently.

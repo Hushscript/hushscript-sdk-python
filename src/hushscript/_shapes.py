@@ -58,6 +58,8 @@ OPTIONS_SUMMARY: Final[Shape] = object_of(
         "language_code": nullable(string),
         "speaker_detection": boolean,
         "medical_mode": boolean,
+        "vet_mode": boolean,
+        "keep_disfluencies": boolean,
         "multichannel": boolean,
         "translation_targets": array_of(string),
         "keyterms": boolean,

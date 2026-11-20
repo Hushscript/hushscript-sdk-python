@@ -6,6 +6,11 @@ from typing import Any, TypeVar, cast
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
+from ..models.transaction_provider import (
+    TransactionProvider,
+    check_transaction_provider,
+)
+
 T = TypeVar("T", bound="Transaction")
 
 
@@ -21,6 +26,8 @@ class Transaction:
         status (str):
         created_at (int):
         payment_method_type (None | str):
+        provider (TransactionProvider): Where the purchase was paid: Stripe (card, wallet, bank), or a store (Apple,
+            Google Play).
         payment_method_brand (None | str):
         payment_method_last4 (None | str):
         receipt_number (None | str): The public receipt reference, e.g. HS-20260101-abcdef0123456789-1.
@@ -35,6 +42,7 @@ class Transaction:
     status: str
     created_at: int
     payment_method_type: None | str
+    provider: TransactionProvider
     payment_method_brand: None | str
     payment_method_last4: None | str
     receipt_number: None | str
@@ -58,6 +66,8 @@ class Transaction:
 
         payment_method_type: None | str
         payment_method_type = self.payment_method_type
+
+        provider: str = self.provider
 
         payment_method_brand: None | str
         payment_method_brand = self.payment_method_brand
@@ -83,6 +93,7 @@ class Transaction:
                 "status": status,
                 "created_at": created_at,
                 "payment_method_type": payment_method_type,
+                "provider": provider,
                 "payment_method_brand": payment_method_brand,
                 "payment_method_last4": payment_method_last4,
                 "receipt_number": receipt_number,
@@ -115,6 +126,8 @@ class Transaction:
             return cast(None | str, data)
 
         payment_method_type = _parse_payment_method_type(d.pop("payment_method_type"))
+
+        provider = check_transaction_provider(d.pop("provider"))
 
         def _parse_payment_method_brand(data: object) -> None | str:
             if data is None:
@@ -157,6 +170,7 @@ class Transaction:
             status=status,
             created_at=created_at,
             payment_method_type=payment_method_type,
+            provider=provider,
             payment_method_brand=payment_method_brand,
             payment_method_last4=payment_method_last4,
             receipt_number=receipt_number,
