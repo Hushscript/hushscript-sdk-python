@@ -78,10 +78,13 @@ terms are dropped, and an empty list or a blank prompt is not sent. The limits a
 any upload, and a breach raises `PreflightError` with code `invalid_option` naming the limit and the
 offending term:
 
-- `keyterms`: up to 1000 unique terms, each at most 6 words and 128 characters.
+- `keyterms`: up to 1000 unique terms, each at most 6 words and 128 characters, and at most 1000
+  words in total.
 - `prompt`: at most 2000 characters.
-- Both together: the API wraps them into one prompt, and the 2000 limit covers that whole text,
-  which is 203 characters of fixed text plus the prompt, each term plus 2, and 1 between terms.
+
+The prompt and the key terms are sent as separate fields, each checked on its own; the server checks
+the token budget. Languages the API serves with its universal-2 model refuse typed key terms and a
+prompt (`invalid_option`); set `language` to a supported one or drop them.
 
 Lengths count Unicode code points, and words are split on Unicode white space.
 

@@ -30,6 +30,7 @@ MAX_SECONDS: Final = 36_000
 MAX_CONCURRENCY: Final = 8
 MAX_KEYTERMS: Final = 1000
 MAX_KEYTERM_WORDS: Final = 6
+MAX_KEYTERM_TOTAL_WORDS: Final = 1000
 MAX_KEYTERM_CHARS: Final = 128
 MAX_PROMPT_CHARS: Final = 2000
 MAX_MATTER_CODE: Final = 64
@@ -162,15 +163,6 @@ _WHITESPACE: Final = (
     "\u2009\u200a\u2028\u2029\u202f\u205f\u3000"
 )
 _WHITESPACE_RUN: Final = re.compile(f"[{_WHITESPACE}]+")
-# The fixed text the API wraps around a prompt and key terms when both are set.
-_COMPILED_FIXED_CHARS: Final = len(
-    "Transcription context:\n\nBehavior:\n"
-    "\n\nVocabulary:\n"
-    "\n\nInstructions:\n"
-    "- Prefer exact spellings when the audio supports them.\n"
-    "- Do not insert terms that are not audible.\n"
-    "- Preserve speaker turns and timestamps."
-)
 
 
 def invalid_option(message: str) -> PreflightError:
@@ -218,25 +210,20 @@ def _check_context(terms: list[tuple[int, str]], prompt: str | None) -> None:
         raise invalid_option(f"prompt is longer than {MAX_PROMPT_CHARS} characters.")
     if len(terms) > MAX_KEYTERMS:
         raise invalid_option(f"keyterms has more than {MAX_KEYTERMS} unique terms.")
+    words = 0
     for index, term in terms:
         if len(term) > MAX_KEYTERM_CHARS:
             raise invalid_option(
                 f"keyterms[{index}] is longer than {MAX_KEYTERM_CHARS} characters."
             )
-        if len(_WHITESPACE_RUN.split(term)) > MAX_KEYTERM_WORDS:
+        term_words = len(_WHITESPACE_RUN.split(term))
+        if term_words > MAX_KEYTERM_WORDS:
             raise invalid_option(f"keyterms[{index}] has more than {MAX_KEYTERM_WORDS} words.")
-    if prompt is not None and terms:
-        compiled = (
-            _COMPILED_FIXED_CHARS
-            + len(prompt)
-            + sum(len(term) + 2 for _, term in terms)
-            + len(terms)
-            - 1
+        words += term_words
+    if words > MAX_KEYTERM_TOTAL_WORDS:
+        raise invalid_option(
+            f"keyterms has more than {MAX_KEYTERM_TOTAL_WORDS} words in total ({words})."
         )
-        if compiled > MAX_PROMPT_CHARS:
-            raise invalid_option(
-                f"prompt and keyterms together exceed {MAX_PROMPT_CHARS} characters ({compiled})."
-            )
 
 
 def _is_number(value: object) -> bool:
