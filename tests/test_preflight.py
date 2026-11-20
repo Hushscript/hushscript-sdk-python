@@ -75,7 +75,7 @@ def compiled_chars(prompt: str, terms: tuple[str, ...]) -> int:
         {"medical": True, "language": "en_xx"},
         {"medical": True, "language": "EN"},
         {"vet": True},
-        {"vet": True, "language": "en"},
+        {"vet": True, "language": "ja"},
         {"medical": True, "vet": True, "language": "en"},
         {"keyterms": unique_terms(MAX_KEYTERMS + 1)},
         {"keyterms": ("one two three four five six seven",)},
@@ -108,14 +108,10 @@ def test_every_medical_language_of_the_backend_is_accepted(language: str) -> Non
     Options(medical=True, language=language).validate()
 
 
-def test_vet_is_refused_until_its_language_list_names_the_language(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    with pytest.raises(PreflightError):
-        Options(vet=True, language="en").validate()
-    monkeypatch.setattr("hushscript.transcribe.preflight.VET_LANGUAGES", frozenset({"en"}))
-    assert Options(vet=True, language="en").validate().transcription_options() == {
-        "language_code": "en",
+@pytest.mark.parametrize("language", ["en", "en_au", "en_uk", "en_us", "es", "fr", "de", "de_ch"])
+def test_every_vet_language_of_the_backend_is_accepted(language: str) -> None:
+    assert Options(vet=True, language=language).validate().transcription_options() == {
+        "language_code": language,
         "vet_mode": True,
     }
 

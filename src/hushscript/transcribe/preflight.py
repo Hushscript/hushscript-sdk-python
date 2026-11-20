@@ -35,8 +35,8 @@ MAX_PROMPT_CHARS: Final = 2000
 MAX_MATTER_CODE: Final = 64
 # Mirrors the backend's MEDICAL_LANGUAGES (transcription_options.rs), compared exactly.
 MEDICAL_LANGUAGES: Final = frozenset({"en", "en_au", "en_uk", "en_us", "es", "fr", "de", "de_ch"})
-# Mirrors the backend's VET_LANGUAGES, empty until the STT-3.7 probe measures the veterinary domain.
-VET_LANGUAGES: Final[frozenset[str]] = frozenset()
+# Mirrors the backend's VET_LANGUAGES (transcription_options.rs), compared exactly.
+VET_LANGUAGES: Final = frozenset({"en", "en_au", "en_uk", "en_us", "es", "fr", "de", "de_ch"})
 KEY_MIN: Final = 16
 KEY_MAX: Final = 128
 _PRINTABLE_FIRST: Final = 0x21
