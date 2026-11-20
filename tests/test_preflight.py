@@ -357,3 +357,96 @@ def test_the_wire_carries_trimmed_unique_terms_and_the_trimmed_prompt() -> None:
 def test_the_index_names_the_term_in_the_list_the_caller_passed() -> None:
     message = rejection(keyterms=("", "a", "a", "x" * (MAX_KEYTERM_CHARS + 1)))
     assert message.startswith("keyterms[3] ")
+
+
+# Restated on purpose: these mirror backend/src/provider_language_features.rs.
+STT37 = (
+    "af", "ar", "ca", "da", "de", "de_ch", "en", "en_au", "en_uk", "en_us", "es", "et", "fa", "fi",
+    "fr", "gl", "he", "hi", "it", "ja", "ko", "mr", "nl", "nn", "no", "pt", "ro", "ru", "sv", "tr",
+    "ur", "vi", "zh",
+)  # fmt: skip
+UNIVERSAL_2 = (
+    "am", "as", "az", "ba", "be", "bg", "bn", "bo", "br", "bs", "cs", "cy", "el", "eu", "fo", "gu",
+    "ha", "haw", "hr", "ht", "hu", "hy", "id", "is", "jw", "ka", "kk", "km", "kn", "la", "lb", "ln",
+    "lo", "lt", "lv", "mg", "mi", "mk", "ml", "mn", "ms", "mt", "my", "ne", "oc", "pa", "pl", "ps",
+    "sa", "sd", "si", "sk", "sl", "sn", "so", "sq", "sr", "su", "sw", "ta", "te", "tg", "th", "tk",
+    "tl", "tt", "uk", "uz", "yi", "yo",
+)  # fmt: skip
+
+
+def language_message(option: str, language: str) -> str:
+    supported = ", ".join(STT37)
+    return (
+        f'{option} does not work for language "{language}"; it needs language to be one of '
+        f"{supported}."
+    )
+
+
+def test_the_language_lists_cover_the_103_source_languages() -> None:
+    assert len(STT37) == 33
+    assert len(UNIVERSAL_2) == 70
+    assert len({*STT37, *UNIVERSAL_2}) == 103
+
+
+@pytest.mark.parametrize("language", UNIVERSAL_2)
+def test_keyterms_are_refused_in_a_universal_2_language(language: str) -> None:
+    assert rejection(keyterms=("Hushscript",), language=language) == language_message(
+        "keyterms", language
+    )
+
+
+@pytest.mark.parametrize("language", UNIVERSAL_2)
+def test_a_prompt_is_refused_in_a_universal_2_language(language: str) -> None:
+    assert rejection(prompt="Names.", language=language) == language_message("prompt", language)
+
+
+@pytest.mark.parametrize("language", STT37)
+def test_keyterms_and_a_prompt_are_accepted_in_an_stt37_language(language: str) -> None:
+    wire = Options(keyterms=("Hushscript",), prompt="Names.", language=language).validate()
+    assert wire.transcription_options() == {
+        "language_code": language,
+        "keyterms_prompt": ["Hushscript"],
+        "prompt": "Names.",
+    }
+
+
+def test_the_key_terms_are_named_when_both_are_given_and_the_language_is_normalized() -> None:
+    assert rejection(keyterms=("x",), prompt="Names.", language=" PL ") == language_message(
+        "keyterms", "pl"
+    )
+
+
+def test_a_prompt_is_named_next_to_blank_key_terms() -> None:
+    assert rejection(keyterms=(" ", ""), prompt="Names.", language="th") == language_message(
+        "prompt", "th"
+    )
+
+
+@pytest.mark.parametrize(
+    ("changes", "wire"),
+    [
+        ({"keyterms": (" ", ""), "prompt": "  "}, {"language_code": "pl"}),
+        ({"keyterms": ()}, {"language_code": "pl"}),
+        ({"keep_disfluencies": True}, {"language_code": "pl", "keep_disfluencies": True}),
+    ],
+)
+def test_a_universal_2_language_without_context_is_not_refused(
+    changes: dict[str, object], wire: dict[str, object]
+) -> None:
+    assert Options(language="pl", **changes).validate().transcription_options() == wire  # type: ignore[arg-type]
+
+
+def test_key_terms_and_a_prompt_are_not_refused_under_auto_detect() -> None:
+    assert Options(
+        keyterms=("Hushscript",), prompt="Names."
+    ).validate().transcription_options() == {
+        "keyterms_prompt": ["Hushscript"],
+        "prompt": "Names.",
+    }
+
+
+def test_a_language_code_the_sdk_does_not_list_is_left_to_the_server() -> None:
+    assert Options(keyterms=("Hushscript",), language="xx").validate().transcription_options() == {
+        "language_code": "xx",
+        "keyterms_prompt": ["Hushscript"],
+    }

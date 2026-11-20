@@ -37,6 +37,121 @@ MAX_MATTER_CODE: Final = 64
 MEDICAL_LANGUAGES: Final = frozenset({"en", "en_au", "en_uk", "en_us", "es", "fr", "de", "de_ch"})
 # Mirrors the backend's VET_LANGUAGES (transcription_options.rs), compared exactly.
 VET_LANGUAGES: Final = frozenset({"en", "en_au", "en_uk", "en_us", "es", "fr", "de", "de_ch"})
+# Mirrors the backend's STT37 list (provider_language_features.rs), compared exactly: the languages
+# that apply key terms and a prompt.
+STT37_LANGUAGES: Final = frozenset(
+    {
+        "af",
+        "ar",
+        "ca",
+        "da",
+        "de",
+        "de_ch",
+        "en",
+        "en_au",
+        "en_uk",
+        "en_us",
+        "es",
+        "et",
+        "fa",
+        "fi",
+        "fr",
+        "gl",
+        "he",
+        "hi",
+        "it",
+        "ja",
+        "ko",
+        "mr",
+        "nl",
+        "nn",
+        "no",
+        "pt",
+        "ro",
+        "ru",
+        "sv",
+        "tr",
+        "ur",
+        "vi",
+        "zh",
+    }
+)
+# The rest of the API's source languages; the server names a code in neither list itself.
+UNIVERSAL_2_LANGUAGES: Final = frozenset(
+    {
+        "am",
+        "as",
+        "az",
+        "ba",
+        "be",
+        "bg",
+        "bn",
+        "bo",
+        "br",
+        "bs",
+        "cs",
+        "cy",
+        "el",
+        "eu",
+        "fo",
+        "gu",
+        "ha",
+        "haw",
+        "hr",
+        "ht",
+        "hu",
+        "hy",
+        "id",
+        "is",
+        "jw",
+        "ka",
+        "kk",
+        "km",
+        "kn",
+        "la",
+        "lb",
+        "ln",
+        "lo",
+        "lt",
+        "lv",
+        "mg",
+        "mi",
+        "mk",
+        "ml",
+        "mn",
+        "ms",
+        "mt",
+        "my",
+        "ne",
+        "oc",
+        "pa",
+        "pl",
+        "ps",
+        "sa",
+        "sd",
+        "si",
+        "sk",
+        "sl",
+        "sn",
+        "so",
+        "sq",
+        "sr",
+        "su",
+        "sw",
+        "ta",
+        "te",
+        "tg",
+        "th",
+        "tk",
+        "tl",
+        "tt",
+        "uk",
+        "uz",
+        "yi",
+        "yo",
+    }
+)
+_STT37_TEXT: Final = ", ".join(sorted(STT37_LANGUAGES))
 KEY_MIN: Final = 16
 KEY_MAX: Final = 128
 _PRINTABLE_FIRST: Final = 0x21
@@ -77,6 +192,25 @@ def _clean_keyterms(terms: tuple[str, ...]) -> list[tuple[int, str]]:
 def _clean_prompt(prompt: str | None) -> str | None:
     trimmed = None if prompt is None else prompt.strip(_WHITESPACE)
     return trimmed or None
+
+
+def _check_context_language(
+    language: str | None, terms: list[tuple[int, str]], prompt: str | None
+) -> None:
+    """Key terms or a prompt are refused in a language the API does not apply them in."""
+    code = (language or "").strip(_WHITESPACE).lower()
+    if code not in UNIVERSAL_2_LANGUAGES:
+        return
+    if terms:
+        option = "keyterms"
+    elif prompt is not None:
+        option = "prompt"
+    else:
+        return
+    raise invalid_option(
+        f'{option} does not work for language "{code}"; it needs language to be one of '
+        f"{_STT37_TEXT}."
+    )
 
 
 def _check_context(terms: list[tuple[int, str]], prompt: str | None) -> None:
@@ -170,7 +304,9 @@ class Options:
             raise invalid_option(
                 f"vet needs language to be one of {', '.join(sorted(VET_LANGUAGES))}."
             )
-        _check_context(_clean_keyterms(self.keyterms), _clean_prompt(self.prompt))
+        terms, prompt = _clean_keyterms(self.keyterms), _clean_prompt(self.prompt)
+        _check_context_language(self.language, terms, prompt)
+        _check_context(terms, prompt)
         if self.matter_code is not None and len(self.matter_code) > MAX_MATTER_CODE:
             raise invalid_option(f"matter_code must be at most {MAX_MATTER_CODE} characters.")
         return self
