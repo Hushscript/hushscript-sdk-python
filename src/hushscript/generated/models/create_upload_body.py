@@ -6,6 +6,18 @@ from typing import TYPE_CHECKING, Any, TypeVar, cast
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
+from ..models.create_upload_body_origin_source_type_1 import (
+    CreateUploadBodyOriginSourceType1,
+    check_create_upload_body_origin_source_type_1,
+)
+from ..models.create_upload_body_origin_source_type_2_type_1 import (
+    CreateUploadBodyOriginSourceType2Type1,
+    check_create_upload_body_origin_source_type_2_type_1,
+)
+from ..models.create_upload_body_origin_source_type_3_type_1 import (
+    CreateUploadBodyOriginSourceType3Type1,
+    check_create_upload_body_origin_source_type_3_type_1,
+)
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
@@ -39,6 +51,10 @@ class CreateUploadBody:
             backward compatibility: for an org caller the client is always resolved from the matter instead, never from this
             field.
         transcription_options (CreateUploadBodyTranscriptionOptionsType0 | None | Unset):
+        origin_source (CreateUploadBodyOriginSourceType1 | CreateUploadBodyOriginSourceType2Type1 |
+            CreateUploadBodyOriginSourceType3Type1 | None | Unset): Optional. Whether the audio is an uploaded file or a
+            recording. Any other value is ignored, never refused. When absent, a retry inherits its retry_of job's value,
+            and a Personal Access Token caller outside the Chrome extension is recorded as upload.
     """
 
     size_bytes: int
@@ -52,6 +68,13 @@ class CreateUploadBody:
     transcription_options: CreateUploadBodyTranscriptionOptionsType0 | None | Unset = (
         UNSET
     )
+    origin_source: (
+        CreateUploadBodyOriginSourceType1
+        | CreateUploadBodyOriginSourceType2Type1
+        | CreateUploadBodyOriginSourceType3Type1
+        | None
+        | Unset
+    ) = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -109,6 +132,18 @@ class CreateUploadBody:
         else:
             transcription_options = self.transcription_options
 
+        origin_source: None | str | Unset
+        if isinstance(self.origin_source, Unset):
+            origin_source = UNSET
+        elif isinstance(self.origin_source, str):
+            origin_source = self.origin_source
+        elif isinstance(self.origin_source, str):
+            origin_source = self.origin_source
+        elif isinstance(self.origin_source, str):
+            origin_source = self.origin_source
+        else:
+            origin_source = self.origin_source
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -131,6 +166,8 @@ class CreateUploadBody:
             field_dict["client_code"] = client_code
         if transcription_options is not UNSET:
             field_dict["transcription_options"] = transcription_options
+        if origin_source is not UNSET:
+            field_dict["origin_source"] = origin_source
 
         return field_dict
 
@@ -222,6 +259,60 @@ class CreateUploadBody:
             d.pop("transcription_options", UNSET)
         )
 
+        def _parse_origin_source(
+            data: object,
+        ) -> (
+            CreateUploadBodyOriginSourceType1
+            | CreateUploadBodyOriginSourceType2Type1
+            | CreateUploadBodyOriginSourceType3Type1
+            | None
+            | Unset
+        ):
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                origin_source_type_1 = check_create_upload_body_origin_source_type_1(
+                    data
+                )
+
+                return origin_source_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                origin_source_type_2_type_1 = (
+                    check_create_upload_body_origin_source_type_2_type_1(data)
+                )
+
+                return origin_source_type_2_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                origin_source_type_3_type_1 = (
+                    check_create_upload_body_origin_source_type_3_type_1(data)
+                )
+
+                return origin_source_type_3_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(
+                CreateUploadBodyOriginSourceType1
+                | CreateUploadBodyOriginSourceType2Type1
+                | CreateUploadBodyOriginSourceType3Type1
+                | None
+                | Unset,
+                data,
+            )
+
+        origin_source = _parse_origin_source(d.pop("origin_source", UNSET))
+
         create_upload_body = cls(
             size_bytes=size_bytes,
             duration_seconds=duration_seconds,
@@ -232,6 +323,7 @@ class CreateUploadBody:
             matter_code=matter_code,
             client_code=client_code,
             transcription_options=transcription_options,
+            origin_source=origin_source,
         )
 
         create_upload_body.additional_properties = d

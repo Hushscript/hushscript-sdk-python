@@ -22,8 +22,10 @@ class OptionsSummary:
             keep_disfluencies (bool):
             multichannel (bool):
             translation_targets (list[str]):
-            keyterms (bool): Whether a keyterms prompt was set. The terms themselves are not included.
-            prompt (bool): Whether a free-text context prompt was set. The prompt itself is not included.
+            keyterms (bool): Whether a keyterms prompt was set and applies. False when the language cannot use key terms,
+                even if a saved dictionary was selected. The terms themselves are not included.
+            prompt (bool): Whether a free-text context prompt was set and applies. False when the language cannot use a
+                prompt, even if a saved preset was selected. The prompt itself is not included.
             auto_generate_insights (bool | None): This upload's override of automatic Insights generation, or null if it
                 used the account default.
     """

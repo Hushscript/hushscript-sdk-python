@@ -29,6 +29,8 @@ MIN_SECONDS: Final = 15
 MAX_SECONDS: Final = 36_000
 MAX_CONCURRENCY: Final = 8
 MAX_KEYTERMS: Final = 1000
+# Mirrors the backend's MAX_TRANSLATION_TARGETS (MAX_EDIT_LANGUAGES - 1), counted after dedup.
+MAX_TRANSLATION_TARGETS: Final = 15
 MAX_KEYTERM_WORDS: Final = 6
 MAX_KEYTERM_TOTAL_WORDS: Final = 1000
 MAX_KEYTERM_CHARS: Final = 128
@@ -181,6 +183,16 @@ def _clean_keyterms(terms: tuple[str, ...]) -> list[tuple[int, str]]:
     return kept
 
 
+def _distinct_targets(targets: tuple[str, ...]) -> set[str]:
+    """Trimmed, ASCII-lowercased, non-blank targets without repeats, as the API counts them."""
+    cleaned = (target.strip(_WHITESPACE) for target in targets)
+    return {
+        "".join(char.lower() if char.isascii() else char for char in target)
+        for target in cleaned
+        if target
+    }
+
+
 def _clean_prompt(prompt: str | None) -> str | None:
     trimmed = None if prompt is None else prompt.strip(_WHITESPACE)
     return trimmed or None
@@ -291,6 +303,10 @@ class Options:
             raise invalid_option(
                 f"vet needs language to be one of {', '.join(sorted(VET_LANGUAGES))}."
             )
+        if len(_distinct_targets(self.translate_to)) > MAX_TRANSLATION_TARGETS:
+            raise invalid_option(
+                f"translate_to has more than {MAX_TRANSLATION_TARGETS} distinct targets."
+            )
         terms, prompt = _clean_keyterms(self.keyterms), _clean_prompt(self.prompt)
         _check_context_language(self.language, terms, prompt)
         _check_context(terms, prompt)
@@ -305,7 +321,7 @@ class Options:
         wire: dict[str, object] = {}
         if self.language is not None:
             wire["language_code"] = self.language
-        if not self.speakers and not self.translate_to:
+        if not self.speakers:
             wire["speaker_detection"] = False
         if self.translate_to:
             wire["translation_targets"] = list(self.translate_to)
