@@ -444,8 +444,19 @@ _EXTRA_CASES: list[tuple[Callable[[object], ExtraFields], dict[str, object]]] = 
 
 # API fields that have no friendly attribute also stay in `extra`.
 _UNMODELED: dict[Callable[[object], ExtraFields], dict[str, object]] = {
-    Job.from_body: {"private_result_expires_at": None, "private_result_available": False},
-    Transcript.from_api: {"matter_code": None, "client_code": None},
+    Job.from_body: {
+        "private_result_expires_at": None,
+        "private_result_available": False,
+        "origin_source": "upload",
+        "origin_app": "api",
+        "title": None,
+    },
+    Transcript.from_api: {
+        "matter_code": None,
+        "client_code": None,
+        "origin_source": "upload",
+        "origin_app": "api",
+    },
 }
 
 

@@ -16,6 +16,7 @@ from hushscript.transcribe.preflight import (
     MAX_KEYTERM_WORDS,
     MAX_KEYTERMS,
     MAX_PROMPT_CHARS,
+    MAX_TRANSLATION_TARGETS,
     Media,
     Options,
     check_account,
@@ -35,6 +36,7 @@ def test_the_context_limits_equal_the_backends_values() -> None:
     assert MAX_KEYTERM_TOTAL_WORDS == 1000
     assert MAX_KEYTERM_CHARS == 128
     assert MAX_PROMPT_CHARS == 2000
+    assert MAX_TRANSLATION_TARGETS == 15
 
 
 def unique_terms(count: int) -> tuple[str, ...]:
@@ -67,7 +69,6 @@ def rejection(**changes: object) -> str:
         {"medical": True},
         {"medical": True, "language": "ja"},
         {"medical": True, "language": "en_xx"},
-        {"medical": True, "language": "EN"},
         {"vet": True},
         {"vet": True, "language": "ja"},
         {"medical": True, "vet": True, "language": "en"},
@@ -147,9 +148,33 @@ def test_the_wire_options_carry_only_what_was_set() -> None:
     }
 
 
-def test_translation_forces_speaker_detection_on() -> None:
-    wire = Options(speakers=False, translate_to=("de", "fr")).transcription_options()
-    assert wire == {"translation_targets": ["de", "fr"]}
+def test_translation_leaves_speaker_detection_as_given() -> None:
+    off = Options(speakers=False, translate_to=("de", "fr")).transcription_options()
+    assert off == {"speaker_detection": False, "translation_targets": ["de", "fr"]}
+    on = Options(translate_to=("de", "fr")).transcription_options()
+    assert on == {"translation_targets": ["de", "fr"]}
+
+
+def targets(count: int) -> tuple[str, ...]:
+    return tuple(f"t{index}" for index in range(count))
+
+
+def test_fifteen_distinct_translation_targets_are_accepted() -> None:
+    Options(translate_to=targets(MAX_TRANSLATION_TARGETS)).validate()
+
+
+def test_sixteen_distinct_translation_targets_are_refused() -> None:
+    with pytest.raises(PreflightError) as raised:
+        Options(translate_to=targets(MAX_TRANSLATION_TARGETS + 1)).validate()
+    assert raised.value.code == "invalid_option"
+    assert "translate_to" in str(raised.value)
+
+
+def test_translation_targets_are_counted_after_trimming_lowercasing_and_dedup() -> None:
+    repeats = (*targets(MAX_TRANSLATION_TARGETS), " T0 ", "t1", "", "  ")
+    Options(translate_to=repeats).validate()
+    with pytest.raises(PreflightError):
+        Options(translate_to=(*repeats, " T99")).validate()
 
 
 def test_the_create_body_names_every_field_it_has() -> None:
@@ -449,3 +474,16 @@ def test_a_language_code_the_sdk_does_not_list_is_left_to_the_server() -> None:
         "language_code": "xx",
         "keyterms_prompt": ["Hushscript"],
     }
+
+
+@pytest.mark.parametrize(
+    "changes",
+    [
+        {"medical": True, "language": " EN "},
+        {"vet": True, "language": "De_CH"},
+    ],
+)
+def test_medical_and_vet_compare_the_language_as_the_api_normalizes_it(
+    changes: dict[str, object],
+) -> None:
+    Options(**changes).validate()  # type: ignore[arg-type]

@@ -18,6 +18,13 @@ from .context_dictionary import ContextDictionary
 from .context_prompt_preset import ContextPromptPreset
 from .create_setup_session_body import CreateSetupSessionBody
 from .create_upload_body import CreateUploadBody
+from .create_upload_body_origin_source_type_1 import CreateUploadBodyOriginSourceType1
+from .create_upload_body_origin_source_type_2_type_1 import (
+    CreateUploadBodyOriginSourceType2Type1,
+)
+from .create_upload_body_origin_source_type_3_type_1 import (
+    CreateUploadBodyOriginSourceType3Type1,
+)
 from .create_upload_body_transcription_options_type_0 import (
     CreateUploadBodyTranscriptionOptionsType0,
 )
@@ -42,6 +49,12 @@ from .job_failure_kind_type_1 import JobFailureKindType1
 from .job_failure_kind_type_2_type_1 import JobFailureKindType2Type1
 from .job_failure_kind_type_3_type_1 import JobFailureKindType3Type1
 from .job_list import JobList
+from .job_origin_app_type_1 import JobOriginAppType1
+from .job_origin_app_type_2_type_1 import JobOriginAppType2Type1
+from .job_origin_app_type_3_type_1 import JobOriginAppType3Type1
+from .job_origin_source_type_1 import JobOriginSourceType1
+from .job_origin_source_type_2_type_1 import JobOriginSourceType2Type1
+from .job_origin_source_type_3_type_1 import JobOriginSourceType3Type1
 from .lift_transcript_hold_response_200 import LiftTranscriptHoldResponse200
 from .list_jobs_active import ListJobsActive
 from .list_org_matters_status import ListOrgMattersStatus
@@ -82,6 +95,20 @@ from .transaction import Transaction
 from .transaction_provider import TransactionProvider
 from .transactions_response import TransactionsResponse
 from .transcript_detail import TranscriptDetail
+from .transcript_detail_origin_app_type_1 import TranscriptDetailOriginAppType1
+from .transcript_detail_origin_app_type_2_type_1 import (
+    TranscriptDetailOriginAppType2Type1,
+)
+from .transcript_detail_origin_app_type_3_type_1 import (
+    TranscriptDetailOriginAppType3Type1,
+)
+from .transcript_detail_origin_source_type_1 import TranscriptDetailOriginSourceType1
+from .transcript_detail_origin_source_type_2_type_1 import (
+    TranscriptDetailOriginSourceType2Type1,
+)
+from .transcript_detail_origin_source_type_3_type_1 import (
+    TranscriptDetailOriginSourceType3Type1,
+)
 from .transcript_detail_speaker_names import TranscriptDetailSpeakerNames
 from .transcript_envelope import TranscriptEnvelope
 from .transcript_envelope_translations import TranscriptEnvelopeTranslations
@@ -89,6 +116,20 @@ from .transcript_language import TranscriptLanguage
 from .transcript_list import TranscriptList
 from .transcript_list_row import TranscriptListRow
 from .transcript_list_row_insights_state import TranscriptListRowInsightsState
+from .transcript_list_row_origin_app_type_1 import TranscriptListRowOriginAppType1
+from .transcript_list_row_origin_app_type_2_type_1 import (
+    TranscriptListRowOriginAppType2Type1,
+)
+from .transcript_list_row_origin_app_type_3_type_1 import (
+    TranscriptListRowOriginAppType3Type1,
+)
+from .transcript_list_row_origin_source_type_1 import TranscriptListRowOriginSourceType1
+from .transcript_list_row_origin_source_type_2_type_1 import (
+    TranscriptListRowOriginSourceType2Type1,
+)
+from .transcript_list_row_origin_source_type_3_type_1 import (
+    TranscriptListRowOriginSourceType3Type1,
+)
 from .transcription_context_response import TranscriptionContextResponse
 from .upload_complete_response import UploadCompleteResponse
 from .upload_create_response import UploadCreateResponse
@@ -117,6 +158,9 @@ __all__ = (
     "ContextPromptPreset",
     "CreateSetupSessionBody",
     "CreateUploadBody",
+    "CreateUploadBodyOriginSourceType1",
+    "CreateUploadBodyOriginSourceType2Type1",
+    "CreateUploadBodyOriginSourceType3Type1",
     "CreateUploadBodyTranscriptionOptionsType0",
     "CreditLedgerEntry",
     "CreditLedgerResponse",
@@ -137,6 +181,12 @@ __all__ = (
     "JobFailureKindType2Type1",
     "JobFailureKindType3Type1",
     "JobList",
+    "JobOriginAppType1",
+    "JobOriginAppType2Type1",
+    "JobOriginAppType3Type1",
+    "JobOriginSourceType1",
+    "JobOriginSourceType2Type1",
+    "JobOriginSourceType3Type1",
     "LiftTranscriptHoldResponse200",
     "ListJobsActive",
     "ListOrgMattersStatus",
@@ -177,6 +227,12 @@ __all__ = (
     "TransactionProvider",
     "TransactionsResponse",
     "TranscriptDetail",
+    "TranscriptDetailOriginAppType1",
+    "TranscriptDetailOriginAppType2Type1",
+    "TranscriptDetailOriginAppType3Type1",
+    "TranscriptDetailOriginSourceType1",
+    "TranscriptDetailOriginSourceType2Type1",
+    "TranscriptDetailOriginSourceType3Type1",
     "TranscriptDetailSpeakerNames",
     "TranscriptEnvelope",
     "TranscriptEnvelopeTranslations",
@@ -185,6 +241,12 @@ __all__ = (
     "TranscriptList",
     "TranscriptListRow",
     "TranscriptListRowInsightsState",
+    "TranscriptListRowOriginAppType1",
+    "TranscriptListRowOriginAppType2Type1",
+    "TranscriptListRowOriginAppType3Type1",
+    "TranscriptListRowOriginSourceType1",
+    "TranscriptListRowOriginSourceType2Type1",
+    "TranscriptListRowOriginSourceType3Type1",
     "UploadCompleteResponse",
     "UploadCreateResponse",
     "UploadCreateResponseFunding",

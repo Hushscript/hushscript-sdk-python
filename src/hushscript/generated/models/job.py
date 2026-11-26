@@ -18,6 +18,30 @@ from ..models.job_failure_kind_type_3_type_1 import (
     JobFailureKindType3Type1,
     check_job_failure_kind_type_3_type_1,
 )
+from ..models.job_origin_app_type_1 import (
+    JobOriginAppType1,
+    check_job_origin_app_type_1,
+)
+from ..models.job_origin_app_type_2_type_1 import (
+    JobOriginAppType2Type1,
+    check_job_origin_app_type_2_type_1,
+)
+from ..models.job_origin_app_type_3_type_1 import (
+    JobOriginAppType3Type1,
+    check_job_origin_app_type_3_type_1,
+)
+from ..models.job_origin_source_type_1 import (
+    JobOriginSourceType1,
+    check_job_origin_source_type_1,
+)
+from ..models.job_origin_source_type_2_type_1 import (
+    JobOriginSourceType2Type1,
+    check_job_origin_source_type_2_type_1,
+)
+from ..models.job_origin_source_type_3_type_1 import (
+    JobOriginSourceType3Type1,
+    check_job_origin_source_type_3_type_1,
+)
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
@@ -52,6 +76,15 @@ class Job:
         private_result_available (bool):
         options (OptionsSummary): A content-free summary of the transcription options a job was submitted with: what was
             requested, never the free-text content itself.
+        origin_source (JobOriginSourceType1 | JobOriginSourceType2Type1 | JobOriginSourceType3Type1 | None): How the
+            audio entered Hushscript: a file upload, an import from a link, or an in-app recording. Null when unknown, which
+            is always the case for rows created before this field existed.
+        origin_app (JobOriginAppType1 | JobOriginAppType2Type1 | JobOriginAppType3Type1 | None): The app the job was
+            created from: the web app, the Chrome extension, the Android or iOS app, or the API. Null when unknown, which is
+            always the case for rows created before this field existed.
+        title (None | str): The current title of this job's transcript, or null while the job has no transcript or the
+            transcript has no title. Always null for a private-mode job, and null unless the caller may read transcripts: a
+            personal access token needs the transcripts:read scope (a transcribe-only token always gets null).
         fetched_bytes (int | Unset): Bytes fetched so far for a from-url import. Present only while a fetch is in
             progress.
         fetch_total_bytes (int | Unset): The total byte size a from-url import is fetching toward. Present only while a
@@ -75,6 +108,16 @@ class Job:
     private_result_expires_at: int | None
     private_result_available: bool
     options: OptionsSummary
+    origin_source: (
+        JobOriginSourceType1
+        | JobOriginSourceType2Type1
+        | JobOriginSourceType3Type1
+        | None
+    )
+    origin_app: (
+        JobOriginAppType1 | JobOriginAppType2Type1 | JobOriginAppType3Type1 | None
+    )
+    title: None | str
     fetched_bytes: int | Unset = UNSET
     fetch_total_bytes: int | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
@@ -124,6 +167,29 @@ class Job:
 
         options = self.options.to_dict()
 
+        origin_source: None | str
+        if isinstance(self.origin_source, str):
+            origin_source = self.origin_source
+        elif isinstance(self.origin_source, str):
+            origin_source = self.origin_source
+        elif isinstance(self.origin_source, str):
+            origin_source = self.origin_source
+        else:
+            origin_source = self.origin_source
+
+        origin_app: None | str
+        if isinstance(self.origin_app, str):
+            origin_app = self.origin_app
+        elif isinstance(self.origin_app, str):
+            origin_app = self.origin_app
+        elif isinstance(self.origin_app, str):
+            origin_app = self.origin_app
+        else:
+            origin_app = self.origin_app
+
+        title: None | str
+        title = self.title
+
         fetched_bytes = self.fetched_bytes
 
         fetch_total_bytes = self.fetch_total_bytes
@@ -147,6 +213,9 @@ class Job:
                 "private_result_expires_at": private_result_expires_at,
                 "private_result_available": private_result_available,
                 "options": options,
+                "origin_source": origin_source,
+                "origin_app": origin_app,
+                "title": title,
             }
         )
         if fetched_bytes is not UNSET:
@@ -265,6 +334,100 @@ class Job:
 
         options = OptionsSummary.from_dict(d.pop("options"))
 
+        def _parse_origin_source(
+            data: object,
+        ) -> (
+            JobOriginSourceType1
+            | JobOriginSourceType2Type1
+            | JobOriginSourceType3Type1
+            | None
+        ):
+            if data is None:
+                return data
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                origin_source_type_1 = check_job_origin_source_type_1(data)
+
+                return origin_source_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                origin_source_type_2_type_1 = check_job_origin_source_type_2_type_1(
+                    data
+                )
+
+                return origin_source_type_2_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                origin_source_type_3_type_1 = check_job_origin_source_type_3_type_1(
+                    data
+                )
+
+                return origin_source_type_3_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(
+                JobOriginSourceType1
+                | JobOriginSourceType2Type1
+                | JobOriginSourceType3Type1
+                | None,
+                data,
+            )
+
+        origin_source = _parse_origin_source(d.pop("origin_source"))
+
+        def _parse_origin_app(
+            data: object,
+        ) -> JobOriginAppType1 | JobOriginAppType2Type1 | JobOriginAppType3Type1 | None:
+            if data is None:
+                return data
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                origin_app_type_1 = check_job_origin_app_type_1(data)
+
+                return origin_app_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                origin_app_type_2_type_1 = check_job_origin_app_type_2_type_1(data)
+
+                return origin_app_type_2_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                origin_app_type_3_type_1 = check_job_origin_app_type_3_type_1(data)
+
+                return origin_app_type_3_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(
+                JobOriginAppType1
+                | JobOriginAppType2Type1
+                | JobOriginAppType3Type1
+                | None,
+                data,
+            )
+
+        origin_app = _parse_origin_app(d.pop("origin_app"))
+
+        def _parse_title(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        title = _parse_title(d.pop("title"))
+
         fetched_bytes = d.pop("fetched_bytes", UNSET)
 
         fetch_total_bytes = d.pop("fetch_total_bytes", UNSET)
@@ -285,6 +448,9 @@ class Job:
             private_result_expires_at=private_result_expires_at,
             private_result_available=private_result_available,
             options=options,
+            origin_source=origin_source,
+            origin_app=origin_app,
+            title=title,
             fetched_bytes=fetched_bytes,
             fetch_total_bytes=fetch_total_bytes,
         )

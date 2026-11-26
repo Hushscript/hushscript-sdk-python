@@ -6,6 +6,12 @@
 
 * add the `vet_mode` (Veterinary mode, beta; en, en_au, en_uk, en_us, es, fr, de, de_ch; refused with `medical_mode` and in private mode) and `keep_disfluencies` (free, default off) transcription options, both echoed in the job options summary; the medical language list is synced.
 
+### Bug Fixes
+
+* `transcribe()` no longer forces speaker detection on when `translate_to` is set: `speakers=False` is sent as given, as the API now takes it.
+* refuse a `translate_to` of more than 15 distinct targets (trimmed, lowercased) with `PreflightError` `invalid_option` before any request; the API refuses it with `invalid_transcription_options`.
+* regenerate the models from the current API spec: translation targets are any base source language code (99), and jobs and transcripts carry `origin_source` and `origin_app`, jobs also `title`.
+
 ## 1.0.0 (2026-10-13)
 
 

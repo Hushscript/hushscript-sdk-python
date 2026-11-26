@@ -29,14 +29,18 @@ MIN_SECONDS: Final = 15
 MAX_SECONDS: Final = 36_000
 MAX_CONCURRENCY: Final = 8
 MAX_KEYTERMS: Final = 1000
+# Mirrors the backend's MAX_TRANSLATION_TARGETS (MAX_EDIT_LANGUAGES - 1), counted after dedup.
+MAX_TRANSLATION_TARGETS: Final = 15
 MAX_KEYTERM_WORDS: Final = 6
 MAX_KEYTERM_TOTAL_WORDS: Final = 1000
 MAX_KEYTERM_CHARS: Final = 128
 MAX_PROMPT_CHARS: Final = 2000
 MAX_MATTER_CODE: Final = 64
-# Mirrors the backend's MEDICAL_LANGUAGES (transcription_options.rs), compared exactly.
+# Mirrors the backend's MEDICAL_LANGUAGES (transcription_options.rs),
+# compared after trim and ASCII lowercase.
 MEDICAL_LANGUAGES: Final = frozenset({"en", "en_au", "en_uk", "en_us", "es", "fr", "de", "de_ch"})
-# Mirrors the backend's VET_LANGUAGES (transcription_options.rs), compared exactly.
+# Mirrors the backend's VET_LANGUAGES (transcription_options.rs),
+# compared after trim and ASCII lowercase.
 VET_LANGUAGES: Final = frozenset({"en", "en_au", "en_uk", "en_us", "es", "fr", "de", "de_ch"})
 # Mirrors the backend's STT37 list (provider_language_features.rs), compared exactly: the languages
 # that apply key terms and a prompt.
@@ -181,6 +185,18 @@ def _clean_keyterms(terms: tuple[str, ...]) -> list[tuple[int, str]]:
     return kept
 
 
+def _language_code(code: str | None) -> str:
+    """Trimmed and ASCII-lowercased, as the API normalizes language codes."""
+    return "".join(
+        char.lower() if char.isascii() else char for char in (code or "").strip(_WHITESPACE)
+    )
+
+
+def _distinct_targets(targets: tuple[str, ...]) -> set[str]:
+    """Normalized, non-blank targets without repeats, as the API counts them."""
+    return {code for code in map(_language_code, targets) if code}
+
+
 def _clean_prompt(prompt: str | None) -> str | None:
     trimmed = None if prompt is None else prompt.strip(_WHITESPACE)
     return trimmed or None
@@ -190,7 +206,7 @@ def _check_context_language(
     language: str | None, terms: list[tuple[int, str]], prompt: str | None
 ) -> None:
     """Key terms or a prompt are refused in a language the API does not apply them in."""
-    code = (language or "").strip(_WHITESPACE).lower()
+    code = _language_code(language)
     if code not in UNIVERSAL_2_LANGUAGES:
         return
     if terms:
@@ -283,13 +299,17 @@ class Options:
             )
         if self.medical and self.vet:
             raise invalid_option("medical and vet cannot be used together.")
-        if self.medical and self.language not in MEDICAL_LANGUAGES:
+        if self.medical and _language_code(self.language) not in MEDICAL_LANGUAGES:
             raise invalid_option(
                 f"medical needs language to be one of {', '.join(sorted(MEDICAL_LANGUAGES))}."
             )
-        if self.vet and self.language not in VET_LANGUAGES:
+        if self.vet and _language_code(self.language) not in VET_LANGUAGES:
             raise invalid_option(
                 f"vet needs language to be one of {', '.join(sorted(VET_LANGUAGES))}."
+            )
+        if len(_distinct_targets(self.translate_to)) > MAX_TRANSLATION_TARGETS:
+            raise invalid_option(
+                f"translate_to has more than {MAX_TRANSLATION_TARGETS} distinct targets."
             )
         terms, prompt = _clean_keyterms(self.keyterms), _clean_prompt(self.prompt)
         _check_context_language(self.language, terms, prompt)
@@ -305,7 +325,7 @@ class Options:
         wire: dict[str, object] = {}
         if self.language is not None:
             wire["language_code"] = self.language
-        if not self.speakers and not self.translate_to:
+        if not self.speakers:
             wire["speaker_detection"] = False
         if self.translate_to:
             wire["translation_targets"] = list(self.translate_to)
