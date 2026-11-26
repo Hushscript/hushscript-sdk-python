@@ -69,7 +69,6 @@ def rejection(**changes: object) -> str:
         {"medical": True},
         {"medical": True, "language": "ja"},
         {"medical": True, "language": "en_xx"},
-        {"medical": True, "language": "EN"},
         {"vet": True},
         {"vet": True, "language": "ja"},
         {"medical": True, "vet": True, "language": "en"},
@@ -475,3 +474,16 @@ def test_a_language_code_the_sdk_does_not_list_is_left_to_the_server() -> None:
         "language_code": "xx",
         "keyterms_prompt": ["Hushscript"],
     }
+
+
+@pytest.mark.parametrize(
+    "changes",
+    [
+        {"medical": True, "language": " EN "},
+        {"vet": True, "language": "De_CH"},
+    ],
+)
+def test_medical_and_vet_compare_the_language_as_the_api_normalizes_it(
+    changes: dict[str, object],
+) -> None:
+    Options(**changes).validate()  # type: ignore[arg-type]
