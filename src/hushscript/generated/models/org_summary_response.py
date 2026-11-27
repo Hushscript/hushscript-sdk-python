@@ -1,10 +1,21 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Any, TypeVar, cast
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
+
+from ..models.org_summary_response_matter_code_policy import (
+    OrgSummaryResponseMatterCodePolicy,
+    check_org_summary_response_matter_code_policy,
+)
+
+if TYPE_CHECKING:
+    from ..models.org_summary_response_letterhead_type_0 import (
+        OrgSummaryResponseLetterheadType0,
+    )
+
 
 T = TypeVar("T", bound="OrgSummaryResponse")
 
@@ -58,10 +69,6 @@ class OrgSummaryResponse:
             org's current funding window.
         caller_spent_seconds_this_month (int | None): The signed-in caller's own month-to-date spend against the pool.
             Null under the same condition caller_effective_cap_seconds is null.
-        is_owner (bool): Whether the signed-in caller is the workspace's single transferable owner (distinct from
-            is_admin).
-        owner_user_id (str): The id of the workspace's transferable owner, visible to every member. Falls back to the
-            org's creator if owner_user_id was never explicitly set on the row.
         custody (str): private or firm. private: transcripts belong to the member, no reviewer can open them. firm: a
             transcript created while a member belongs to the workspace is workspace property; is_reviewer members can open
             it.
@@ -72,6 +79,12 @@ class OrgSummaryResponse:
             pull in.
         retention_reclamp_days (int | None): The retention day count the armed re-clamp will apply, or null when none is
             scheduled. Mirrors max_retention_days at the moment the re-clamp was armed, not necessarily the current value.
+        matter_code_policy (OrgSummaryResponseMatterCodePolicy): Whether uploads by members must carry a matter_code:
+            off, optional, or required (an upload without one is refused with org_matter_code_required).
+        rebill_rate_cents_per_hour (int): The workspace's client rebill rate in US cents per hour of audio, used for
+            usage reports and exports.
+        letterhead (None | OrgSummaryResponseLetterheadType0): The workspace letterhead printed on exports, or null when
+            none is set.
     """
 
     id: str
@@ -104,15 +117,20 @@ class OrgSummaryResponse:
     member_cap_seconds: int | None
     caller_effective_cap_seconds: int | None
     caller_spent_seconds_this_month: int | None
-    is_owner: bool
-    owner_user_id: str
     custody: str
     custody_switch_at: int | None
     retention_reclamp_at: int | None
     retention_reclamp_days: int | None
+    matter_code_policy: OrgSummaryResponseMatterCodePolicy
+    rebill_rate_cents_per_hour: int
+    letterhead: None | OrgSummaryResponseLetterheadType0
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
+        from ..models.org_summary_response_letterhead_type_0 import (
+            OrgSummaryResponseLetterheadType0,  # noqa: PLC0415
+        )
+
         id = self.id
 
         name = self.name
@@ -188,10 +206,6 @@ class OrgSummaryResponse:
         caller_spent_seconds_this_month: int | None
         caller_spent_seconds_this_month = self.caller_spent_seconds_this_month
 
-        is_owner = self.is_owner
-
-        owner_user_id = self.owner_user_id
-
         custody = self.custody
 
         custody_switch_at: int | None
@@ -202,6 +216,16 @@ class OrgSummaryResponse:
 
         retention_reclamp_days: int | None
         retention_reclamp_days = self.retention_reclamp_days
+
+        matter_code_policy: str = self.matter_code_policy
+
+        rebill_rate_cents_per_hour = self.rebill_rate_cents_per_hour
+
+        letterhead: dict[str, Any] | None
+        if isinstance(self.letterhead, OrgSummaryResponseLetterheadType0):
+            letterhead = self.letterhead.to_dict()
+        else:
+            letterhead = self.letterhead
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
@@ -237,12 +261,13 @@ class OrgSummaryResponse:
                 "member_cap_seconds": member_cap_seconds,
                 "caller_effective_cap_seconds": caller_effective_cap_seconds,
                 "caller_spent_seconds_this_month": caller_spent_seconds_this_month,
-                "is_owner": is_owner,
-                "owner_user_id": owner_user_id,
                 "custody": custody,
                 "custody_switch_at": custody_switch_at,
                 "retention_reclamp_at": retention_reclamp_at,
                 "retention_reclamp_days": retention_reclamp_days,
+                "matter_code_policy": matter_code_policy,
+                "rebill_rate_cents_per_hour": rebill_rate_cents_per_hour,
+                "letterhead": letterhead,
             }
         )
 
@@ -250,6 +275,10 @@ class OrgSummaryResponse:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.org_summary_response_letterhead_type_0 import (
+            OrgSummaryResponseLetterheadType0,  # noqa: PLC0415
+        )
+
         d = dict(src_dict)
         id = d.pop("id")
 
@@ -392,10 +421,6 @@ class OrgSummaryResponse:
             d.pop("caller_spent_seconds_this_month")
         )
 
-        is_owner = d.pop("is_owner")
-
-        owner_user_id = d.pop("owner_user_id")
-
         custody = d.pop("custody")
 
         def _parse_custody_switch_at(data: object) -> int | None:
@@ -422,6 +447,27 @@ class OrgSummaryResponse:
         retention_reclamp_days = _parse_retention_reclamp_days(
             d.pop("retention_reclamp_days")
         )
+
+        matter_code_policy = check_org_summary_response_matter_code_policy(
+            d.pop("matter_code_policy")
+        )
+
+        rebill_rate_cents_per_hour = d.pop("rebill_rate_cents_per_hour")
+
+        def _parse_letterhead(data: object) -> None | OrgSummaryResponseLetterheadType0:
+            if data is None:
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+                letterhead_type_0 = OrgSummaryResponseLetterheadType0.from_dict(data)
+
+                return letterhead_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(None | OrgSummaryResponseLetterheadType0, data)
+
+        letterhead = _parse_letterhead(d.pop("letterhead"))
 
         org_summary_response = cls(
             id=id,
@@ -454,12 +500,13 @@ class OrgSummaryResponse:
             member_cap_seconds=member_cap_seconds,
             caller_effective_cap_seconds=caller_effective_cap_seconds,
             caller_spent_seconds_this_month=caller_spent_seconds_this_month,
-            is_owner=is_owner,
-            owner_user_id=owner_user_id,
             custody=custody,
             custody_switch_at=custody_switch_at,
             retention_reclamp_at=retention_reclamp_at,
             retention_reclamp_days=retention_reclamp_days,
+            matter_code_policy=matter_code_policy,
+            rebill_rate_cents_per_hour=rebill_rate_cents_per_hour,
+            letterhead=letterhead,
         )
 
         org_summary_response.additional_properties = d
