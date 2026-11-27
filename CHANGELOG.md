@@ -12,6 +12,10 @@
 * refuse a `translate_to` of more than 15 distinct targets (trimmed, lowercased) with `PreflightError` `invalid_option` before any request; the API refuses it with `invalid_transcription_options`.
 * regenerate the models from the current API spec: translation targets are any base source language code (99), and jobs and transcripts carry `origin_source` and `origin_app`, jobs also `title`.
 
+### Documentation
+
+* README links point at the live pricing page and the SDK section of the developers page; the old `/pricing` and `/sdks` URLs redirect there.
+
 ## 1.0.0 (2026-10-13)
 
 
