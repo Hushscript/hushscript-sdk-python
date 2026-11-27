@@ -8,6 +8,7 @@
 
 ### Bug Fixes
 
+* sync `openapi.json` with the production spec (`translation_targets` loses `maxItems`: the API counts the 15-target cap after dedup, as the preflight already does) and pin the conformance suite to `v1.1.0`.
 * `transcribe()` no longer forces speaker detection on when `translate_to` is set: `speakers=False` is sent as given, as the API now takes it.
 * refuse a `translate_to` of more than 15 distinct targets (trimmed, lowercased) with `PreflightError` `invalid_option` before any request; the API refuses it with `invalid_transcription_options`.
 * regenerate the models from the current API spec: translation targets are any base source language code (99), and jobs and transcripts carry `origin_source` and `origin_app`, jobs also `title`.
