@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## [1.2.0](https://github.com/Hushscript/hushscript-sdk-python/compare/v1.1.2...v1.2.0) (2026-11-27)
 
 ### Features
 
@@ -16,15 +16,6 @@
 ### Documentation
 
 * README links point at the live pricing page and the SDK section of the developers page; the old `/pricing` and `/sdks` URLs redirect there.
-
-## [1.2.0](https://github.com/Hushscript/hushscript-sdk-python/compare/v1.1.2...v1.2.0) (2026-11-27)
-
-
-### Bug Fixes
-
-* compare the language for medical and vet as the api normalizes it ([6dcc30f](https://github.com/Hushscript/hushscript-sdk-python/commit/6dcc30fdf34b5c9a6b1bdb9462e69f088a5a777c))
-* send speaker_detection as given with translations, cap translate_to at 15 targets, regenerate from current spec ([ec679f8](https://github.com/Hushscript/hushscript-sdk-python/commit/ec679f8fa86a2c54f791663ad971dbcded7fe1b0))
-* sync the api spec with production and pin conformance v1.1.0 ([0b19c62](https://github.com/Hushscript/hushscript-sdk-python/commit/0b19c62ced48bcade817e121cf9e862d568868f2))
 
 ## [1.1.2](https://github.com/Hushscript/hushscript-sdk-python/compare/v1.1.1...v1.1.2) (2026-11-09)
 
