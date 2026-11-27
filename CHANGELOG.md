@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## [1.2.0](https://github.com/Hushscript/hushscript-sdk-python/compare/v1.1.2...v1.2.0) (2026-11-27)
 
 ### Features
 
