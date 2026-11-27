@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/Hushscript/hushscript-sdk-python/compare/v1.2.0...v1.2.1) (2026-11-27)
+
+
+### Bug Fixes
+
+* sync the spec with the backend: org summary drops is_owner and owner_user_id (never sent) and adds matter_code_policy, rebill_rate_cents_per_hour and letterhead; upload mode is standard or private; six more upload options; rotate always returns expires_at ([c62fcfa](https://github.com/Hushscript/hushscript-sdk-python/commit/c62fcfa3d759b8df4eed53fa5062d29435806a15))
+
 ## [1.2.0](https://github.com/Hushscript/hushscript-sdk-python/compare/v1.1.2...v1.2.0) (2026-11-27)
 
 ### Features
