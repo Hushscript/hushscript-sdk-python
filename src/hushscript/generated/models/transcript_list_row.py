@@ -10,6 +10,30 @@ from ..models.transcript_list_row_insights_state import (
     TranscriptListRowInsightsState,
     check_transcript_list_row_insights_state,
 )
+from ..models.transcript_list_row_origin_app_type_1 import (
+    TranscriptListRowOriginAppType1,
+    check_transcript_list_row_origin_app_type_1,
+)
+from ..models.transcript_list_row_origin_app_type_2_type_1 import (
+    TranscriptListRowOriginAppType2Type1,
+    check_transcript_list_row_origin_app_type_2_type_1,
+)
+from ..models.transcript_list_row_origin_app_type_3_type_1 import (
+    TranscriptListRowOriginAppType3Type1,
+    check_transcript_list_row_origin_app_type_3_type_1,
+)
+from ..models.transcript_list_row_origin_source_type_1 import (
+    TranscriptListRowOriginSourceType1,
+    check_transcript_list_row_origin_source_type_1,
+)
+from ..models.transcript_list_row_origin_source_type_2_type_1 import (
+    TranscriptListRowOriginSourceType2Type1,
+    check_transcript_list_row_origin_source_type_2_type_1,
+)
+from ..models.transcript_list_row_origin_source_type_3_type_1 import (
+    TranscriptListRowOriginSourceType3Type1,
+    check_transcript_list_row_origin_source_type_3_type_1,
+)
 
 if TYPE_CHECKING:
     from ..models.options_summary import OptionsSummary
@@ -33,6 +57,14 @@ class TranscriptListRow:
             requested, never the free-text content itself.
         insights_state (TranscriptListRowInsightsState): A display hint only, never an authority on whether Insights may
             be generated or charged for.
+        origin_source (None | TranscriptListRowOriginSourceType1 | TranscriptListRowOriginSourceType2Type1 |
+            TranscriptListRowOriginSourceType3Type1): How the audio entered Hushscript: a file upload, an import from a
+            link, or an in-app recording. Null when unknown, which is always the case for rows created before this field
+            existed.
+        origin_app (None | TranscriptListRowOriginAppType1 | TranscriptListRowOriginAppType2Type1 |
+            TranscriptListRowOriginAppType3Type1): The app the job was created from: the web app, the Chrome extension, the
+            Android or iOS app, or the API. Null when unknown, which is always the case for rows created before this field
+            existed.
     """
 
     id: str
@@ -44,6 +76,18 @@ class TranscriptListRow:
     tags: list[str]
     options: OptionsSummary
     insights_state: TranscriptListRowInsightsState
+    origin_source: (
+        None
+        | TranscriptListRowOriginSourceType1
+        | TranscriptListRowOriginSourceType2Type1
+        | TranscriptListRowOriginSourceType3Type1
+    )
+    origin_app: (
+        None
+        | TranscriptListRowOriginAppType1
+        | TranscriptListRowOriginAppType2Type1
+        | TranscriptListRowOriginAppType3Type1
+    )
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -67,6 +111,26 @@ class TranscriptListRow:
 
         insights_state: str = self.insights_state
 
+        origin_source: None | str
+        if isinstance(self.origin_source, str):
+            origin_source = self.origin_source
+        elif isinstance(self.origin_source, str):
+            origin_source = self.origin_source
+        elif isinstance(self.origin_source, str):
+            origin_source = self.origin_source
+        else:
+            origin_source = self.origin_source
+
+        origin_app: None | str
+        if isinstance(self.origin_app, str):
+            origin_app = self.origin_app
+        elif isinstance(self.origin_app, str):
+            origin_app = self.origin_app
+        elif isinstance(self.origin_app, str):
+            origin_app = self.origin_app
+        else:
+            origin_app = self.origin_app
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -80,6 +144,8 @@ class TranscriptListRow:
                 "tags": tags,
                 "options": options,
                 "insights_state": insights_state,
+                "origin_source": origin_source,
+                "origin_app": origin_app,
             }
         )
 
@@ -120,6 +186,104 @@ class TranscriptListRow:
             d.pop("insights_state")
         )
 
+        def _parse_origin_source(
+            data: object,
+        ) -> (
+            None
+            | TranscriptListRowOriginSourceType1
+            | TranscriptListRowOriginSourceType2Type1
+            | TranscriptListRowOriginSourceType3Type1
+        ):
+            if data is None:
+                return data
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                origin_source_type_1 = check_transcript_list_row_origin_source_type_1(
+                    data
+                )
+
+                return origin_source_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                origin_source_type_2_type_1 = (
+                    check_transcript_list_row_origin_source_type_2_type_1(data)
+                )
+
+                return origin_source_type_2_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                origin_source_type_3_type_1 = (
+                    check_transcript_list_row_origin_source_type_3_type_1(data)
+                )
+
+                return origin_source_type_3_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(
+                None
+                | TranscriptListRowOriginSourceType1
+                | TranscriptListRowOriginSourceType2Type1
+                | TranscriptListRowOriginSourceType3Type1,
+                data,
+            )
+
+        origin_source = _parse_origin_source(d.pop("origin_source"))
+
+        def _parse_origin_app(
+            data: object,
+        ) -> (
+            None
+            | TranscriptListRowOriginAppType1
+            | TranscriptListRowOriginAppType2Type1
+            | TranscriptListRowOriginAppType3Type1
+        ):
+            if data is None:
+                return data
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                origin_app_type_1 = check_transcript_list_row_origin_app_type_1(data)
+
+                return origin_app_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                origin_app_type_2_type_1 = (
+                    check_transcript_list_row_origin_app_type_2_type_1(data)
+                )
+
+                return origin_app_type_2_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                origin_app_type_3_type_1 = (
+                    check_transcript_list_row_origin_app_type_3_type_1(data)
+                )
+
+                return origin_app_type_3_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(
+                None
+                | TranscriptListRowOriginAppType1
+                | TranscriptListRowOriginAppType2Type1
+                | TranscriptListRowOriginAppType3Type1,
+                data,
+            )
+
+        origin_app = _parse_origin_app(d.pop("origin_app"))
+
         transcript_list_row = cls(
             id=id,
             title=title,
@@ -130,6 +294,8 @@ class TranscriptListRow:
             tags=tags,
             options=options,
             insights_state=insights_state,
+            origin_source=origin_source,
+            origin_app=origin_app,
         )
 
         transcript_list_row.additional_properties = d

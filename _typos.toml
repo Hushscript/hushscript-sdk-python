@@ -3,3 +3,6 @@ extend-exclude = ["openapi.json", "uv.lock", "src/hushscript/generated/**", "LIC
 
 [default.extend-words]
 JOD = "JOD"
+# Language codes (Bashkir, Faroese) in the language lists in src/hushscript/transcribe/preflight.py
+ba = "ba"
+fo = "fo"

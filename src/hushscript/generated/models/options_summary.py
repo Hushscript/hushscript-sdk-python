@@ -18,10 +18,14 @@ class OptionsSummary:
             language_code (None | str): The manually forced language, or null if language auto-detection was used.
             speaker_detection (bool):
             medical_mode (bool):
+            vet_mode (bool):
+            keep_disfluencies (bool):
             multichannel (bool):
             translation_targets (list[str]):
-            keyterms (bool): Whether a keyterms prompt was set. The terms themselves are not included.
-            prompt (bool): Whether a free-text context prompt was set. The prompt itself is not included.
+            keyterms (bool): Whether a keyterms prompt was set and applies. False when the language cannot use key terms,
+                even if a saved dictionary was selected. The terms themselves are not included.
+            prompt (bool): Whether a free-text context prompt was set and applies. False when the language cannot use a
+                prompt, even if a saved preset was selected. The prompt itself is not included.
             auto_generate_insights (bool | None): This upload's override of automatic Insights generation, or null if it
                 used the account default.
     """
@@ -29,6 +33,8 @@ class OptionsSummary:
     language_code: None | str
     speaker_detection: bool
     medical_mode: bool
+    vet_mode: bool
+    keep_disfluencies: bool
     multichannel: bool
     translation_targets: list[str]
     keyterms: bool
@@ -43,6 +49,10 @@ class OptionsSummary:
         speaker_detection = self.speaker_detection
 
         medical_mode = self.medical_mode
+
+        vet_mode = self.vet_mode
+
+        keep_disfluencies = self.keep_disfluencies
 
         multichannel = self.multichannel
 
@@ -62,6 +72,8 @@ class OptionsSummary:
                 "language_code": language_code,
                 "speaker_detection": speaker_detection,
                 "medical_mode": medical_mode,
+                "vet_mode": vet_mode,
+                "keep_disfluencies": keep_disfluencies,
                 "multichannel": multichannel,
                 "translation_targets": translation_targets,
                 "keyterms": keyterms,
@@ -87,6 +99,10 @@ class OptionsSummary:
 
         medical_mode = d.pop("medical_mode")
 
+        vet_mode = d.pop("vet_mode")
+
+        keep_disfluencies = d.pop("keep_disfluencies")
+
         multichannel = d.pop("multichannel")
 
         translation_targets = cast(list[str], d.pop("translation_targets"))
@@ -108,6 +124,8 @@ class OptionsSummary:
             language_code=language_code,
             speaker_detection=speaker_detection,
             medical_mode=medical_mode,
+            vet_mode=vet_mode,
+            keep_disfluencies=keep_disfluencies,
             multichannel=multichannel,
             translation_targets=translation_targets,
             keyterms=keyterms,

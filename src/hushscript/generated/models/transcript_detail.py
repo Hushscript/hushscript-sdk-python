@@ -6,6 +6,31 @@ from typing import TYPE_CHECKING, Any, TypeVar, cast
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
+from ..models.transcript_detail_origin_app_type_1 import (
+    TranscriptDetailOriginAppType1,
+    check_transcript_detail_origin_app_type_1,
+)
+from ..models.transcript_detail_origin_app_type_2_type_1 import (
+    TranscriptDetailOriginAppType2Type1,
+    check_transcript_detail_origin_app_type_2_type_1,
+)
+from ..models.transcript_detail_origin_app_type_3_type_1 import (
+    TranscriptDetailOriginAppType3Type1,
+    check_transcript_detail_origin_app_type_3_type_1,
+)
+from ..models.transcript_detail_origin_source_type_1 import (
+    TranscriptDetailOriginSourceType1,
+    check_transcript_detail_origin_source_type_1,
+)
+from ..models.transcript_detail_origin_source_type_2_type_1 import (
+    TranscriptDetailOriginSourceType2Type1,
+    check_transcript_detail_origin_source_type_2_type_1,
+)
+from ..models.transcript_detail_origin_source_type_3_type_1 import (
+    TranscriptDetailOriginSourceType3Type1,
+    check_transcript_detail_origin_source_type_3_type_1,
+)
+
 if TYPE_CHECKING:
     from ..models.transcript_detail_speaker_names import TranscriptDetailSpeakerNames
     from ..models.transcript_envelope import TranscriptEnvelope
@@ -34,6 +59,13 @@ class TranscriptDetail:
         client_code (None | str): The workspace client this transcript is filed under, or null. Set at upload time and
             editable afterwards; always null for a transcript that was never funded by a workspace.
         body (TranscriptEnvelope): The transcript's full structured body.
+        origin_source (None | TranscriptDetailOriginSourceType1 | TranscriptDetailOriginSourceType2Type1 |
+            TranscriptDetailOriginSourceType3Type1): How the audio entered Hushscript: a file upload, an import from a link,
+            or an in-app recording. Null when unknown, which is always the case for rows created before this field existed.
+        origin_app (None | TranscriptDetailOriginAppType1 | TranscriptDetailOriginAppType2Type1 |
+            TranscriptDetailOriginAppType3Type1): The app the job was created from: the web app, the Chrome extension, the
+            Android or iOS app, or the API. Null when unknown, which is always the case for rows created before this field
+            existed.
     """
 
     id: str
@@ -49,6 +81,18 @@ class TranscriptDetail:
     matter_code: None | str
     client_code: None | str
     body: TranscriptEnvelope
+    origin_source: (
+        None
+        | TranscriptDetailOriginSourceType1
+        | TranscriptDetailOriginSourceType2Type1
+        | TranscriptDetailOriginSourceType3Type1
+    )
+    origin_app: (
+        None
+        | TranscriptDetailOriginAppType1
+        | TranscriptDetailOriginAppType2Type1
+        | TranscriptDetailOriginAppType3Type1
+    )
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -82,6 +126,26 @@ class TranscriptDetail:
 
         body = self.body.to_dict()
 
+        origin_source: None | str
+        if isinstance(self.origin_source, str):
+            origin_source = self.origin_source
+        elif isinstance(self.origin_source, str):
+            origin_source = self.origin_source
+        elif isinstance(self.origin_source, str):
+            origin_source = self.origin_source
+        else:
+            origin_source = self.origin_source
+
+        origin_app: None | str
+        if isinstance(self.origin_app, str):
+            origin_app = self.origin_app
+        elif isinstance(self.origin_app, str):
+            origin_app = self.origin_app
+        elif isinstance(self.origin_app, str):
+            origin_app = self.origin_app
+        else:
+            origin_app = self.origin_app
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -99,6 +163,8 @@ class TranscriptDetail:
                 "matter_code": matter_code,
                 "client_code": client_code,
                 "body": body,
+                "origin_source": origin_source,
+                "origin_app": origin_app,
             }
         )
 
@@ -158,6 +224,104 @@ class TranscriptDetail:
 
         body = TranscriptEnvelope.from_dict(d.pop("body"))
 
+        def _parse_origin_source(
+            data: object,
+        ) -> (
+            None
+            | TranscriptDetailOriginSourceType1
+            | TranscriptDetailOriginSourceType2Type1
+            | TranscriptDetailOriginSourceType3Type1
+        ):
+            if data is None:
+                return data
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                origin_source_type_1 = check_transcript_detail_origin_source_type_1(
+                    data
+                )
+
+                return origin_source_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                origin_source_type_2_type_1 = (
+                    check_transcript_detail_origin_source_type_2_type_1(data)
+                )
+
+                return origin_source_type_2_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                origin_source_type_3_type_1 = (
+                    check_transcript_detail_origin_source_type_3_type_1(data)
+                )
+
+                return origin_source_type_3_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(
+                None
+                | TranscriptDetailOriginSourceType1
+                | TranscriptDetailOriginSourceType2Type1
+                | TranscriptDetailOriginSourceType3Type1,
+                data,
+            )
+
+        origin_source = _parse_origin_source(d.pop("origin_source"))
+
+        def _parse_origin_app(
+            data: object,
+        ) -> (
+            None
+            | TranscriptDetailOriginAppType1
+            | TranscriptDetailOriginAppType2Type1
+            | TranscriptDetailOriginAppType3Type1
+        ):
+            if data is None:
+                return data
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                origin_app_type_1 = check_transcript_detail_origin_app_type_1(data)
+
+                return origin_app_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                origin_app_type_2_type_1 = (
+                    check_transcript_detail_origin_app_type_2_type_1(data)
+                )
+
+                return origin_app_type_2_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                origin_app_type_3_type_1 = (
+                    check_transcript_detail_origin_app_type_3_type_1(data)
+                )
+
+                return origin_app_type_3_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(
+                None
+                | TranscriptDetailOriginAppType1
+                | TranscriptDetailOriginAppType2Type1
+                | TranscriptDetailOriginAppType3Type1,
+                data,
+            )
+
+        origin_app = _parse_origin_app(d.pop("origin_app"))
+
         transcript_detail = cls(
             id=id,
             title=title,
@@ -172,6 +336,8 @@ class TranscriptDetail:
             matter_code=matter_code,
             client_code=client_code,
             body=body,
+            origin_source=origin_source,
+            origin_app=origin_app,
         )
 
         transcript_detail.additional_properties = d

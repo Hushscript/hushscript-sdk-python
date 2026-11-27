@@ -103,10 +103,11 @@ def sync_detailed(
     """Start a new transcription upload and place a credit hold
 
      Declares the size and duration of a new audio upload, places a credit hold for the billable seconds
-    (duration plus any transcription_options surcharge), and returns a job id plus, when direct-to-R2
-    uploads are available, a first page of presigned part URLs. Resending the same idempotency_key
-    returns the already-created job instead of opening a second one. Long direct-to-R2 transfers must
-    call heartbeat_upload periodically or the job is reaped as idle.
+    (duration plus any transcription_options surcharge: medical_mode or vet_mode, multichannel,
+    translation), and returns a job id plus, when direct-to-R2 uploads are available, a first page of
+    presigned part URLs. Resending the same idempotency_key returns the already-created job instead of
+    opening a second one. Long direct-to-R2 transfers must call heartbeat_upload periodically or the job
+    is reaped as idle.
 
     Args:
         body (CreateUploadBody):
@@ -138,10 +139,11 @@ def sync(
     """Start a new transcription upload and place a credit hold
 
      Declares the size and duration of a new audio upload, places a credit hold for the billable seconds
-    (duration plus any transcription_options surcharge), and returns a job id plus, when direct-to-R2
-    uploads are available, a first page of presigned part URLs. Resending the same idempotency_key
-    returns the already-created job instead of opening a second one. Long direct-to-R2 transfers must
-    call heartbeat_upload periodically or the job is reaped as idle.
+    (duration plus any transcription_options surcharge: medical_mode or vet_mode, multichannel,
+    translation), and returns a job id plus, when direct-to-R2 uploads are available, a first page of
+    presigned part URLs. Resending the same idempotency_key returns the already-created job instead of
+    opening a second one. Long direct-to-R2 transfers must call heartbeat_upload periodically or the job
+    is reaped as idle.
 
     Args:
         body (CreateUploadBody):
@@ -168,10 +170,11 @@ async def asyncio_detailed(
     """Start a new transcription upload and place a credit hold
 
      Declares the size and duration of a new audio upload, places a credit hold for the billable seconds
-    (duration plus any transcription_options surcharge), and returns a job id plus, when direct-to-R2
-    uploads are available, a first page of presigned part URLs. Resending the same idempotency_key
-    returns the already-created job instead of opening a second one. Long direct-to-R2 transfers must
-    call heartbeat_upload periodically or the job is reaped as idle.
+    (duration plus any transcription_options surcharge: medical_mode or vet_mode, multichannel,
+    translation), and returns a job id plus, when direct-to-R2 uploads are available, a first page of
+    presigned part URLs. Resending the same idempotency_key returns the already-created job instead of
+    opening a second one. Long direct-to-R2 transfers must call heartbeat_upload periodically or the job
+    is reaped as idle.
 
     Args:
         body (CreateUploadBody):
@@ -201,10 +204,11 @@ async def asyncio(
     """Start a new transcription upload and place a credit hold
 
      Declares the size and duration of a new audio upload, places a credit hold for the billable seconds
-    (duration plus any transcription_options surcharge), and returns a job id plus, when direct-to-R2
-    uploads are available, a first page of presigned part URLs. Resending the same idempotency_key
-    returns the already-created job instead of opening a second one. Long direct-to-R2 transfers must
-    call heartbeat_upload periodically or the job is reaped as idle.
+    (duration plus any transcription_options surcharge: medical_mode or vet_mode, multichannel,
+    translation), and returns a job id plus, when direct-to-R2 uploads are available, a first page of
+    presigned part URLs. Resending the same idempotency_key returns the already-created job instead of
+    opening a second one. Long direct-to-R2 transfers must call heartbeat_upload periodically or the job
+    is reaped as idle.
 
     Args:
         body (CreateUploadBody):

@@ -234,6 +234,8 @@ OPTIONS: dict[str, object] = {
     "language_code": None,
     "speaker_detection": True,
     "medical_mode": False,
+    "vet_mode": False,
+    "keep_disfluencies": False,
     "multichannel": False,
     "translation_targets": [],
     "keyterms": False,
@@ -260,6 +262,9 @@ def job_body(job_id: str, state: str, **fields: object) -> dict[str, object]:
         "private_result_expires_at": None,
         "private_result_available": False,
         "options": OPTIONS,
+        "origin_source": "upload",
+        "origin_app": "api",
+        "title": None,
         **fields,
     }
 
@@ -279,6 +284,8 @@ def transcript_body(transcript_id: str = "tr_1", **fields: object) -> dict[str, 
         "edited": False,
         "matter_code": None,
         "client_code": None,
+        "origin_source": "upload",
+        "origin_app": "api",
         "body": {
             "version": 1,
             "original": {

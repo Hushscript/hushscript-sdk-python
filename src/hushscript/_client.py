@@ -250,6 +250,8 @@ def _options(  # noqa: PLR0913  the keyword surface of `transcribe()`, validated
     keyterms: Sequence[str] | None,
     prompt: str | None,
     medical: bool,
+    vet: bool,
+    keep_disfluencies: bool,
     multichannel: bool,
     auto_insights: bool | None,
     matter_code: str | None,
@@ -266,6 +268,8 @@ def _options(  # noqa: PLR0913  the keyword surface of `transcribe()`, validated
         keyterms=tuple(keyterms or ()),
         prompt=prompt,
         medical=medical,
+        vet=vet,
+        keep_disfluencies=keep_disfluencies,
         multichannel=multichannel,
         auto_insights=auto_insights,
         matter_code=matter_code,
@@ -414,6 +418,8 @@ class Hushscript:
         keyterms: Sequence[str] | None = None,
         prompt: str | None = None,
         medical: bool = False,
+        vet: bool = False,
+        keep_disfluencies: bool = False,
         multichannel: bool = False,
         auto_insights: bool | None = None,
         matter_code: str | None = None,
@@ -430,9 +436,10 @@ class Hushscript:
 
         Key terms and the prompt are trimmed first: blank terms are dropped, and an empty
         list or a blank prompt is not sent. `keyterms` takes up to 1000 unique terms of at most
-        6 words and 128 characters each. `prompt` takes up to 2000 characters; with key terms
-        set, the 2000 covers the prompt and the key terms the API wraps around it (203
-        characters of fixed text, each term plus 2, and 1 between terms)."""
+        6 words and 128 characters each, and at most 1000 words in total. `prompt` takes up to
+        2000 characters. They are sent separately, and the server checks the token budget.
+        Languages the API applies neither to (the universal-2 ones) refuse typed key terms and
+        a prompt."""
         options = _options(
             title=title,
             language=language,
@@ -441,6 +448,8 @@ class Hushscript:
             keyterms=keyterms,
             prompt=prompt,
             medical=medical,
+            vet=vet,
+            keep_disfluencies=keep_disfluencies,
             multichannel=multichannel,
             auto_insights=auto_insights,
             matter_code=matter_code,
@@ -617,6 +626,8 @@ class AsyncHushscript:
         keyterms: Sequence[str] | None = None,
         prompt: str | None = None,
         medical: bool = False,
+        vet: bool = False,
+        keep_disfluencies: bool = False,
         multichannel: bool = False,
         auto_insights: bool | None = None,
         matter_code: str | None = None,
@@ -632,9 +643,10 @@ class AsyncHushscript:
 
         Key terms and the prompt are trimmed first: blank terms are dropped, and an empty
         list or a blank prompt is not sent. `keyterms` takes up to 1000 unique terms of at most
-        6 words and 128 characters each. `prompt` takes up to 2000 characters; with key terms
-        set, the 2000 covers the prompt and the key terms the API wraps around it (203
-        characters of fixed text, each term plus 2, and 1 between terms)."""
+        6 words and 128 characters each, and at most 1000 words in total. `prompt` takes up to
+        2000 characters. They are sent separately, and the server checks the token budget.
+        Languages the API applies neither to (the universal-2 ones) refuse typed key terms and
+        a prompt."""
         options = _options(
             title=title,
             language=language,
@@ -643,6 +655,8 @@ class AsyncHushscript:
             keyterms=keyterms,
             prompt=prompt,
             medical=medical,
+            vet=vet,
+            keep_disfluencies=keep_disfluencies,
             multichannel=multichannel,
             auto_insights=auto_insights,
             matter_code=matter_code,

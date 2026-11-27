@@ -29,11 +29,134 @@ MIN_SECONDS: Final = 15
 MAX_SECONDS: Final = 36_000
 MAX_CONCURRENCY: Final = 8
 MAX_KEYTERMS: Final = 1000
+# Mirrors the backend's MAX_TRANSLATION_TARGETS (MAX_EDIT_LANGUAGES - 1), counted after dedup.
+MAX_TRANSLATION_TARGETS: Final = 15
 MAX_KEYTERM_WORDS: Final = 6
+MAX_KEYTERM_TOTAL_WORDS: Final = 1000
 MAX_KEYTERM_CHARS: Final = 128
 MAX_PROMPT_CHARS: Final = 2000
 MAX_MATTER_CODE: Final = 64
-MEDICAL_LANGUAGES: Final = frozenset({"en", "es", "fr", "de"})
+# Mirrors the backend's MEDICAL_LANGUAGES (transcription_options.rs),
+# compared after trim and ASCII lowercase.
+MEDICAL_LANGUAGES: Final = frozenset({"en", "en_au", "en_uk", "en_us", "es", "fr", "de", "de_ch"})
+# Mirrors the backend's VET_LANGUAGES (transcription_options.rs),
+# compared after trim and ASCII lowercase.
+VET_LANGUAGES: Final = frozenset({"en", "en_au", "en_uk", "en_us", "es", "fr", "de", "de_ch"})
+# Mirrors the backend's STT37 list (provider_language_features.rs), compared exactly: the languages
+# that apply key terms and a prompt.
+STT37_LANGUAGES: Final = frozenset(
+    {
+        "af",
+        "ar",
+        "ca",
+        "da",
+        "de",
+        "de_ch",
+        "en",
+        "en_au",
+        "en_uk",
+        "en_us",
+        "es",
+        "et",
+        "fa",
+        "fi",
+        "fr",
+        "gl",
+        "he",
+        "hi",
+        "it",
+        "ja",
+        "ko",
+        "mr",
+        "nl",
+        "nn",
+        "no",
+        "pt",
+        "ro",
+        "ru",
+        "sv",
+        "tr",
+        "ur",
+        "vi",
+        "zh",
+    }
+)
+# The rest of the API's source languages; the server names a code in neither list itself.
+UNIVERSAL_2_LANGUAGES: Final = frozenset(
+    {
+        "am",
+        "as",
+        "az",
+        "ba",
+        "be",
+        "bg",
+        "bn",
+        "bo",
+        "br",
+        "bs",
+        "cs",
+        "cy",
+        "el",
+        "eu",
+        "fo",
+        "gu",
+        "ha",
+        "haw",
+        "hr",
+        "ht",
+        "hu",
+        "hy",
+        "id",
+        "is",
+        "jw",
+        "ka",
+        "kk",
+        "km",
+        "kn",
+        "la",
+        "lb",
+        "ln",
+        "lo",
+        "lt",
+        "lv",
+        "mg",
+        "mi",
+        "mk",
+        "ml",
+        "mn",
+        "ms",
+        "mt",
+        "my",
+        "ne",
+        "oc",
+        "pa",
+        "pl",
+        "ps",
+        "sa",
+        "sd",
+        "si",
+        "sk",
+        "sl",
+        "sn",
+        "so",
+        "sq",
+        "sr",
+        "su",
+        "sw",
+        "ta",
+        "te",
+        "tg",
+        "th",
+        "tk",
+        "tl",
+        "tt",
+        "uk",
+        "uz",
+        "yi",
+        "yo",
+    }
+)
+_STT37_TEXT: Final = ", ".join(sorted(STT37_LANGUAGES))
 KEY_MIN: Final = 16
 KEY_MAX: Final = 128
 _PRINTABLE_FIRST: Final = 0x21
@@ -44,15 +167,6 @@ _WHITESPACE: Final = (
     "\u2009\u200a\u2028\u2029\u202f\u205f\u3000"
 )
 _WHITESPACE_RUN: Final = re.compile(f"[{_WHITESPACE}]+")
-# The fixed text the API wraps around a prompt and key terms when both are set.
-_COMPILED_FIXED_CHARS: Final = len(
-    "Transcription context:\n\nBehavior:\n"
-    "\n\nVocabulary:\n"
-    "\n\nInstructions:\n"
-    "- Prefer exact spellings when the audio supports them.\n"
-    "- Do not insert terms that are not audible.\n"
-    "- Preserve speaker turns and timestamps."
-)
 
 
 def invalid_option(message: str) -> PreflightError:
@@ -71,9 +185,40 @@ def _clean_keyterms(terms: tuple[str, ...]) -> list[tuple[int, str]]:
     return kept
 
 
+def _language_code(code: str | None) -> str:
+    """Trimmed and ASCII-lowercased, as the API normalizes language codes."""
+    return "".join(
+        char.lower() if char.isascii() else char for char in (code or "").strip(_WHITESPACE)
+    )
+
+
+def _distinct_targets(targets: tuple[str, ...]) -> set[str]:
+    """Normalized, non-blank targets without repeats, as the API counts them."""
+    return {code for code in map(_language_code, targets) if code}
+
+
 def _clean_prompt(prompt: str | None) -> str | None:
     trimmed = None if prompt is None else prompt.strip(_WHITESPACE)
     return trimmed or None
+
+
+def _check_context_language(
+    language: str | None, terms: list[tuple[int, str]], prompt: str | None
+) -> None:
+    """Key terms or a prompt are refused in a language the API does not apply them in."""
+    code = _language_code(language)
+    if code not in UNIVERSAL_2_LANGUAGES:
+        return
+    if terms:
+        option = "keyterms"
+    elif prompt is not None:
+        option = "prompt"
+    else:
+        return
+    raise invalid_option(
+        f'{option} does not work for language "{code}"; it needs language to be one of '
+        f"{_STT37_TEXT}."
+    )
 
 
 def _check_context(terms: list[tuple[int, str]], prompt: str | None) -> None:
@@ -81,25 +226,20 @@ def _check_context(terms: list[tuple[int, str]], prompt: str | None) -> None:
         raise invalid_option(f"prompt is longer than {MAX_PROMPT_CHARS} characters.")
     if len(terms) > MAX_KEYTERMS:
         raise invalid_option(f"keyterms has more than {MAX_KEYTERMS} unique terms.")
+    words = 0
     for index, term in terms:
         if len(term) > MAX_KEYTERM_CHARS:
             raise invalid_option(
                 f"keyterms[{index}] is longer than {MAX_KEYTERM_CHARS} characters."
             )
-        if len(_WHITESPACE_RUN.split(term)) > MAX_KEYTERM_WORDS:
+        term_words = len(_WHITESPACE_RUN.split(term))
+        if term_words > MAX_KEYTERM_WORDS:
             raise invalid_option(f"keyterms[{index}] has more than {MAX_KEYTERM_WORDS} words.")
-    if prompt is not None and terms:
-        compiled = (
-            _COMPILED_FIXED_CHARS
-            + len(prompt)
-            + sum(len(term) + 2 for _, term in terms)
-            + len(terms)
-            - 1
+        words += term_words
+    if words > MAX_KEYTERM_TOTAL_WORDS:
+        raise invalid_option(
+            f"keyterms has more than {MAX_KEYTERM_TOTAL_WORDS} words in total ({words})."
         )
-        if compiled > MAX_PROMPT_CHARS:
-            raise invalid_option(
-                f"prompt and keyterms together exceed {MAX_PROMPT_CHARS} characters ({compiled})."
-            )
 
 
 def _is_number(value: object) -> bool:
@@ -124,6 +264,8 @@ class Options:
     keyterms: tuple[str, ...] = ()
     prompt: str | None = None
     medical: bool = False
+    vet: bool = False
+    keep_disfluencies: bool = False
     multichannel: bool = False
     auto_insights: bool | None = None
     matter_code: str | None = None
@@ -155,9 +297,23 @@ class Options:
                 f"idempotency_key must be {KEY_MIN} to {KEY_MAX} visible ASCII characters,"
                 " no spaces."
             )
-        if self.medical and self.language not in MEDICAL_LANGUAGES:
-            raise invalid_option("medical needs language to be one of en, es, fr, de.")
-        _check_context(_clean_keyterms(self.keyterms), _clean_prompt(self.prompt))
+        if self.medical and self.vet:
+            raise invalid_option("medical and vet cannot be used together.")
+        if self.medical and _language_code(self.language) not in MEDICAL_LANGUAGES:
+            raise invalid_option(
+                f"medical needs language to be one of {', '.join(sorted(MEDICAL_LANGUAGES))}."
+            )
+        if self.vet and _language_code(self.language) not in VET_LANGUAGES:
+            raise invalid_option(
+                f"vet needs language to be one of {', '.join(sorted(VET_LANGUAGES))}."
+            )
+        if len(_distinct_targets(self.translate_to)) > MAX_TRANSLATION_TARGETS:
+            raise invalid_option(
+                f"translate_to has more than {MAX_TRANSLATION_TARGETS} distinct targets."
+            )
+        terms, prompt = _clean_keyterms(self.keyterms), _clean_prompt(self.prompt)
+        _check_context_language(self.language, terms, prompt)
+        _check_context(terms, prompt)
         if self.matter_code is not None and len(self.matter_code) > MAX_MATTER_CODE:
             raise invalid_option(f"matter_code must be at most {MAX_MATTER_CODE} characters.")
         return self
@@ -169,7 +325,7 @@ class Options:
         wire: dict[str, object] = {}
         if self.language is not None:
             wire["language_code"] = self.language
-        if not self.speakers and not self.translate_to:
+        if not self.speakers:
             wire["speaker_detection"] = False
         if self.translate_to:
             wire["translation_targets"] = list(self.translate_to)
@@ -179,13 +335,19 @@ class Options:
         prompt = _clean_prompt(self.prompt)
         if prompt is not None:
             wire["prompt"] = prompt
-        if self.medical:
-            wire["medical_mode"] = True
-        if self.multichannel:
-            wire["multichannel"] = True
+        wire.update(self._set_flags())
         if self.auto_insights is not None:
             wire["auto_generate_insights"] = self.auto_insights
         return wire
+
+    def _set_flags(self) -> dict[str, object]:
+        flags = {
+            "medical_mode": self.medical,
+            "vet_mode": self.vet,
+            "keep_disfluencies": self.keep_disfluencies,
+            "multichannel": self.multichannel,
+        }
+        return {key: True for key, on in flags.items() if on}
 
 
 @dataclass(frozen=True, slots=True)

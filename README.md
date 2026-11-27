@@ -7,7 +7,7 @@ the failures in between so you do not have to.
 ## Why Hushscript
 
 - **No subscription.** You buy prepaid minute packs, and nothing recurs. Current prices are on the
-  [pricing page](https://hushscript.com/pricing).
+  [pricing page](https://hushscript.com/pay-as-you-go-transcription-pricing).
 - **The audio you send isn't kept.** The audio sent for transcription isn't kept after processing. Stored
   transcripts are encrypted at rest, and you choose how long they stay.
 - **Free speaker labels and AI insights.** Speaker labels carry no extra charge (medical mode and
@@ -34,7 +34,7 @@ the failures in between so you do not have to.
   allow it).
 - Let an agent sign up, pay at a hosted checkout and claim its own token, with no human account.
 
-[Website](https://hushscript.com) · [Pricing](https://hushscript.com/pricing) · [SDK docs](https://hushscript.com/sdks) · [API reference](https://hushscript.com/developers)
+[Website](https://hushscript.com) · [Pricing](https://hushscript.com/pay-as-you-go-transcription-pricing) · [SDK docs](https://hushscript.com/developers#sdks-and-cli) · [API reference](https://hushscript.com/developers)
 
 ## Quick start
 
@@ -78,10 +78,13 @@ terms are dropped, and an empty list or a blank prompt is not sent. The limits a
 any upload, and a breach raises `PreflightError` with code `invalid_option` naming the limit and the
 offending term:
 
-- `keyterms`: up to 1000 unique terms, each at most 6 words and 128 characters.
+- `keyterms`: up to 1000 unique terms, each at most 6 words and 128 characters, and at most 1000
+  words in total.
 - `prompt`: at most 2000 characters.
-- Both together: the API wraps them into one prompt, and the 2000 limit covers that whole text,
-  which is 203 characters of fixed text plus the prompt, each term plus 2, and 1 between terms.
+
+The prompt and the key terms are sent as separate fields, each checked on its own; the server checks
+the token budget. Languages the API serves with its universal-2 model refuse typed key terms and a
+prompt (`invalid_option`); set `language` to a supported one or drop them.
 
 Lengths count Unicode code points, and words are split on Unicode white space.
 
@@ -408,7 +411,7 @@ client-side code is a leaked token.
 Personal accounts buy prepaid minute packs. The price of a pack depends on your country, and your
 minutes stay valid for a year after your last transcription or purchase. A transcription uses the
 minutes of the recording; medical mode and each translation target use more. Current prices are on
-[hushscript.com/pricing](https://hushscript.com/pricing).
+[hushscript.com/pay-as-you-go-transcription-pricing](https://hushscript.com/pay-as-you-go-transcription-pricing).
 
 ## Requirements
 
@@ -418,7 +421,7 @@ The 3.15 image builds final Python 3.15.0 from its checksum-pinned official sour
 
 ## Links
 
-- Documentation: <https://hushscript.com/sdks>
+- Documentation: <https://hushscript.com/developers#sdks-and-cli>
 - REST API reference: <https://hushscript.com/developers>
 - Package on PyPI: <https://pypi.org/project/hushscript/>
 - Source: <https://github.com/Hushscript/hushscript-sdk-python>

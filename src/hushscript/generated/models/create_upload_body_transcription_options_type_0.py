@@ -17,23 +17,41 @@ class CreateUploadBodyTranscriptionOptionsType0:
     behaviour (language auto-detection and speaker labels on).
 
         Attributes:
-            language_code (None | str | Unset): Force a specific spoken language instead of auto-detection.
-            speaker_detection (bool | Unset): Label distinct speakers in the transcript. Forced on automatically when
-                translation_targets is non-empty.
+            language_code (None | str | Unset): Force a specific spoken language instead of auto-detection. Key terms, a
+                prompt and filler words (keep_disfluencies) only take effect for the 33 languages AssemblyAI serves with its
+                newest model; for the other languages, typed key terms or a typed prompt are refused with
+                invalid_transcription_options.
+            speaker_detection (bool | Unset): Label distinct speakers in the transcript. Independent of translation_targets.
             keyterms_prompt (list[str] | Unset): Domain vocabulary to bias transcription toward, up to 1000 terms of at most
-                6 words each.
-            prompt (None | str | Unset): Free-text context to bias transcription toward.
+                6 words each, and at most 1,000 words in total after merging saved dictionaries and one-off terms. Refused with
+                invalid_transcription_options when the language (language_code, or every expected language under auto-detection)
+                is one where key terms have no effect, or when the merged terms and the prompt together exceed the provider
+                token budget (how many fit depends on the script and the length of the terms).
+            prompt (None | str | Unset): Free-text context to bias transcription toward. Refused with
+                invalid_transcription_options when the language is one where a prompt has no effect. Sent as written, separately
+                from the key terms; the two share one provider token budget.
             medical_mode (bool | Unset): Bill and transcribe as a medical dictation. Requires language_code to be one of en,
-                es, fr, de; billed at a 100 percent surcharge on the duration.
+                en_au, en_uk, en_us, es, fr, de, de_ch; billed at a 100 percent surcharge on the duration. Cannot be combined
+                with vet_mode.
+            vet_mode (bool | Unset): Beta. Transcribe as a veterinary dictation. Requires a manually set language_code from
+                the supported list; auto-detection is refused. Billed at a 100 percent surcharge on the duration, exactly like
+                medical_mode, and cannot be combined with medical_mode. Not available in private mode.
+            keep_disfluencies (bool | Unset): Keep disfluencies in the transcript instead of removing them. On many
+                languages this also keeps repetitions, stutters and false starts; on others it keeps filler words only. Free,
+                and allowed in private mode. Defaults to false. Only takes effect for the languages where key terms take effect;
+                for any other language the server stores false.
             multichannel (bool | Unset): Transcribe each audio channel independently. Billed per channel: a stereo file
-                counts twice, a 3-channel file three times, up to 8 channels, and the medical surcharge applies on top of that;
-                translation targets stay on a single duration. The channel count is the most channels any audio track of the
-                file carries. A file with more than 8 channels, or one whose channel count cannot be read, falls back to mixed
-                audio with speaker labels and is billed once. Without this option the file is transcribed as one mixed channel
-                and billed once. The initial hold at upload creation is for a single channel; verification raises it to the per-
-                channel amount and fails the job with insufficient_balance if the balance cannot cover it.
-            translation_targets (list[str] | Unset): Locales to additionally translate the transcript into. Each target adds
-                a 25 percent surcharge on the duration and forces speaker_detection on.
+                counts twice, a 3-channel file three times, up to 8 channels, and the medical or vet surcharge applies on top of
+                that; translation targets stay on a single duration. The channel count is the most channels any audio track of
+                the file carries. A file with more than 8 channels, or one whose channel count cannot be read, falls back to
+                mixed audio with speaker labels and is billed once. Without this option the file is transcribed as one mixed
+                channel and billed once. The initial hold at upload creation is for a single channel; verification raises it to
+                the per-channel amount and fails the job with insufficient_balance if the balance cannot cover it.
+            translation_targets (list[str] | Unset): Locales to additionally translate the transcript into: any language
+                code accepted by language_code except the regional variants (en_au, en_uk, en_us, de_ch), 99 in all. At most 15
+                distinct targets per upload (a saved edit holds the original plus 15 translations); more is refused with
+                invalid_transcription_options. A target equal to the source language is refused. Each target adds a 25 percent
+                surcharge on the duration.
             auto_generate_insights (bool | None | Unset): Override the account's automatic-Insights default for this upload
                 alone. Omit to inherit the account default; an explicit false always suppresses automatic generation for this
                 upload.
@@ -44,6 +62,8 @@ class CreateUploadBodyTranscriptionOptionsType0:
     keyterms_prompt: list[str] | Unset = UNSET
     prompt: None | str | Unset = UNSET
     medical_mode: bool | Unset = UNSET
+    vet_mode: bool | Unset = UNSET
+    keep_disfluencies: bool | Unset = UNSET
     multichannel: bool | Unset = UNSET
     translation_targets: list[str] | Unset = UNSET
     auto_generate_insights: bool | None | Unset = UNSET
@@ -70,6 +90,10 @@ class CreateUploadBodyTranscriptionOptionsType0:
 
         medical_mode = self.medical_mode
 
+        vet_mode = self.vet_mode
+
+        keep_disfluencies = self.keep_disfluencies
+
         multichannel = self.multichannel
 
         translation_targets: list[str] | Unset = UNSET
@@ -95,6 +119,10 @@ class CreateUploadBodyTranscriptionOptionsType0:
             field_dict["prompt"] = prompt
         if medical_mode is not UNSET:
             field_dict["medical_mode"] = medical_mode
+        if vet_mode is not UNSET:
+            field_dict["vet_mode"] = vet_mode
+        if keep_disfluencies is not UNSET:
+            field_dict["keep_disfluencies"] = keep_disfluencies
         if multichannel is not UNSET:
             field_dict["multichannel"] = multichannel
         if translation_targets is not UNSET:
@@ -132,6 +160,10 @@ class CreateUploadBodyTranscriptionOptionsType0:
 
         medical_mode = d.pop("medical_mode", UNSET)
 
+        vet_mode = d.pop("vet_mode", UNSET)
+
+        keep_disfluencies = d.pop("keep_disfluencies", UNSET)
+
         multichannel = d.pop("multichannel", UNSET)
 
         translation_targets = cast(list[str], d.pop("translation_targets", UNSET))
@@ -153,6 +185,8 @@ class CreateUploadBodyTranscriptionOptionsType0:
             keyterms_prompt=keyterms_prompt,
             prompt=prompt,
             medical_mode=medical_mode,
+            vet_mode=vet_mode,
+            keep_disfluencies=keep_disfluencies,
             multichannel=multichannel,
             translation_targets=translation_targets,
             auto_generate_insights=auto_generate_insights,
