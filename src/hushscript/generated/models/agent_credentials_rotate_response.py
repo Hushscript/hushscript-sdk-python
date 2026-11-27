@@ -6,8 +6,6 @@ from typing import Any, TypeVar, cast
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset
-
 T = TypeVar("T", bound="AgentCredentialsRotateResponse")
 
 
@@ -20,14 +18,14 @@ class AgentCredentialsRotateResponse:
             working for this route only, until the successor's first successful request or one hour, whichever comes first.
         pat_id (str): The successor's id.
         scopes (list[str]): The scopes carried by pat, identical to the predecessor's.
-        expires_at (int | None | Unset): The successor's expiry policy, carried over from the predecessor unchanged.
-            Null when the predecessor never expired.
+        expires_at (int | None): The successor's expiry policy, carried over from the predecessor unchanged. Null when
+            the predecessor never expired.
     """
 
     pat: str
     pat_id: str
     scopes: list[str]
-    expires_at: int | None | Unset = UNSET
+    expires_at: int | None
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -37,11 +35,8 @@ class AgentCredentialsRotateResponse:
 
         scopes = self.scopes
 
-        expires_at: int | None | Unset
-        if isinstance(self.expires_at, Unset):
-            expires_at = UNSET
-        else:
-            expires_at = self.expires_at
+        expires_at: int | None
+        expires_at = self.expires_at
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
@@ -50,10 +45,9 @@ class AgentCredentialsRotateResponse:
                 "pat": pat,
                 "pat_id": pat_id,
                 "scopes": scopes,
+                "expires_at": expires_at,
             }
         )
-        if expires_at is not UNSET:
-            field_dict["expires_at"] = expires_at
 
         return field_dict
 
@@ -66,14 +60,12 @@ class AgentCredentialsRotateResponse:
 
         scopes = cast(list[str], d.pop("scopes"))
 
-        def _parse_expires_at(data: object) -> int | None | Unset:
+        def _parse_expires_at(data: object) -> int | None:
             if data is None:
                 return data
-            if isinstance(data, Unset):
-                return data
-            return cast(int | None | Unset, data)
+            return cast(int | None, data)
 
-        expires_at = _parse_expires_at(d.pop("expires_at", UNSET))
+        expires_at = _parse_expires_at(d.pop("expires_at"))
 
         agent_credentials_rotate_response = cls(
             pat=pat,

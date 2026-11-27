@@ -18,6 +18,9 @@ from .context_dictionary import ContextDictionary
 from .context_prompt_preset import ContextPromptPreset
 from .create_setup_session_body import CreateSetupSessionBody
 from .create_upload_body import CreateUploadBody
+from .create_upload_body_mode_type_1 import CreateUploadBodyModeType1
+from .create_upload_body_mode_type_2_type_1 import CreateUploadBodyModeType2Type1
+from .create_upload_body_mode_type_3_type_1 import CreateUploadBodyModeType3Type1
 from .create_upload_body_origin_source_type_1 import CreateUploadBodyOriginSourceType1
 from .create_upload_body_origin_source_type_2_type_1 import (
     CreateUploadBodyOriginSourceType2Type1,
@@ -71,6 +74,8 @@ from .org_matters_response import OrgMattersResponse
 from .org_member import OrgMember
 from .org_members_response import OrgMembersResponse
 from .org_summary_response import OrgSummaryResponse
+from .org_summary_response_letterhead_type_0 import OrgSummaryResponseLetterheadType0
+from .org_summary_response_matter_code_policy import OrgSummaryResponseMatterCodePolicy
 from .org_transcript import OrgTranscript
 from .org_transcripts_response import OrgTranscriptsResponse
 from .org_usage_report_csv_group_by import OrgUsageReportCsvGroupBy
@@ -158,6 +163,9 @@ __all__ = (
     "ContextPromptPreset",
     "CreateSetupSessionBody",
     "CreateUploadBody",
+    "CreateUploadBodyModeType1",
+    "CreateUploadBodyModeType2Type1",
+    "CreateUploadBodyModeType3Type1",
     "CreateUploadBodyOriginSourceType1",
     "CreateUploadBodyOriginSourceType2Type1",
     "CreateUploadBodyOriginSourceType3Type1",
@@ -203,6 +211,8 @@ __all__ = (
     "OrgMember",
     "OrgMembersResponse",
     "OrgSummaryResponse",
+    "OrgSummaryResponseLetterheadType0",
+    "OrgSummaryResponseMatterCodePolicy",
     "OrgTranscript",
     "OrgTranscriptsResponse",
     "OrgUsageReportCsvGroupBy",
