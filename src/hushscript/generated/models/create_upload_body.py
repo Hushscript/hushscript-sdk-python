@@ -6,6 +6,18 @@ from typing import TYPE_CHECKING, Any, TypeVar, cast
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
+from ..models.create_upload_body_mode_type_1 import (
+    CreateUploadBodyModeType1,
+    check_create_upload_body_mode_type_1,
+)
+from ..models.create_upload_body_mode_type_2_type_1 import (
+    CreateUploadBodyModeType2Type1,
+    check_create_upload_body_mode_type_2_type_1,
+)
+from ..models.create_upload_body_mode_type_3_type_1 import (
+    CreateUploadBodyModeType3Type1,
+    check_create_upload_body_mode_type_3_type_1,
+)
 from ..models.create_upload_body_origin_source_type_1 import (
     CreateUploadBodyOriginSourceType1,
     check_create_upload_body_origin_source_type_1,
@@ -39,7 +51,9 @@ class CreateUploadBody:
         title (None | str | Unset): An optional display title. A value longer than 300 bytes is truncated on a character
             boundary rather than rejected, and this response does not echo the stored value; read it back from the
             transcript once the job completes. In `private` mode the title is not stored at all.
-        mode (None | str | Unset): Optional job mode, e.g. a private-result upload.
+        mode (CreateUploadBodyModeType1 | CreateUploadBodyModeType2Type1 | CreateUploadBodyModeType3Type1 | None |
+            Unset): standard (the default when absent or null) or private: a private-result upload saves no transcript and
+            returns a password-protected archive. Any other value is refused.
         part_size_bytes (int | None | Unset): Optional smaller part size for a flaky connection. Clamped to this API's
             supported range; omit for the 32 MiB default.
         idempotency_key (None | str | Unset): An optional client-minted key, 16 to 128 bytes. Resending the same key
@@ -60,7 +74,13 @@ class CreateUploadBody:
     size_bytes: int
     duration_seconds: int
     title: None | str | Unset = UNSET
-    mode: None | str | Unset = UNSET
+    mode: (
+        CreateUploadBodyModeType1
+        | CreateUploadBodyModeType2Type1
+        | CreateUploadBodyModeType3Type1
+        | None
+        | Unset
+    ) = UNSET
     part_size_bytes: int | None | Unset = UNSET
     idempotency_key: None | str | Unset = UNSET
     matter_code: None | str | Unset = UNSET
@@ -95,6 +115,12 @@ class CreateUploadBody:
         mode: None | str | Unset
         if isinstance(self.mode, Unset):
             mode = UNSET
+        elif isinstance(self.mode, str):
+            mode = self.mode
+        elif isinstance(self.mode, str):
+            mode = self.mode
+        elif isinstance(self.mode, str):
+            mode = self.mode
         else:
             mode = self.mode
 
@@ -191,12 +217,51 @@ class CreateUploadBody:
 
         title = _parse_title(d.pop("title", UNSET))
 
-        def _parse_mode(data: object) -> None | str | Unset:
+        def _parse_mode(
+            data: object,
+        ) -> (
+            CreateUploadBodyModeType1
+            | CreateUploadBodyModeType2Type1
+            | CreateUploadBodyModeType3Type1
+            | None
+            | Unset
+        ):
             if data is None:
                 return data
             if isinstance(data, Unset):
                 return data
-            return cast(None | str | Unset, data)
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                mode_type_1 = check_create_upload_body_mode_type_1(data)
+
+                return mode_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                mode_type_2_type_1 = check_create_upload_body_mode_type_2_type_1(data)
+
+                return mode_type_2_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                mode_type_3_type_1 = check_create_upload_body_mode_type_3_type_1(data)
+
+                return mode_type_3_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(
+                CreateUploadBodyModeType1
+                | CreateUploadBodyModeType2Type1
+                | CreateUploadBodyModeType3Type1
+                | None
+                | Unset,
+                data,
+            )
 
         mode = _parse_mode(d.pop("mode", UNSET))
 

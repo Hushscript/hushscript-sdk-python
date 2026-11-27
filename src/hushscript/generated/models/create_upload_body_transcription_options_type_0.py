@@ -30,6 +30,29 @@ class CreateUploadBodyTranscriptionOptionsType0:
             prompt (None | str | Unset): Free-text context to bias transcription toward. Refused with
                 invalid_transcription_options when the language is one where a prompt has no effect. Sent as written, separately
                 from the key terms; the two share one provider token budget.
+            one_off_keyterms (list[str] | Unset): Key terms for this job only, merged with keyterms_prompt and the terms of
+                any dictionary_ids. Same limits as keyterms_prompt: up to 1000 terms of at most 6 words each, and at most 1,000
+                words in total across all key terms. Refused with invalid_transcription_options on a language where key terms
+                have no effect.
+            one_off_prompt (None | str | Unset): Prompt text for this job only, joined to prompt and any prompt_preset_id
+                text. Refused with invalid_transcription_options on a language where a prompt has no effect. Shares the provider
+                token budget with the key terms.
+            dictionary_ids (list[str] | Unset): Saved dictionaries to apply, by the 32-character lowercase hex ids that GET
+                /v1/transcription-context lists. Their terms join the key terms and count toward the key-term limits. Duplicates
+                are ignored; at most 50 distinct ids. A malformed id or one the caller cannot read is refused with
+                invalid_transcription_options. On a language where key terms have no effect the selection is skipped, not
+                refused.
+            prompt_preset_id (None | str | Unset): A saved prompt preset to apply, by the 32-character lowercase hex id that
+                GET /v1/transcription-context lists. Its text is joined to prompt and one_off_prompt. A malformed id or one the
+                caller cannot read is refused with invalid_transcription_options. On a language where a prompt has no effect the
+                selection is skipped, not refused.
+            expected_languages (list[str] | Unset): Auto-detection hint: restrict language detection to these codes (any
+                code accepted by language_code). Ignored when language_code is set. An unsupported code is refused with
+                invalid_transcription_options. Key terms, a prompt and keep_disfluencies apply when every expected language
+                supports them, are skipped when none does, and otherwise apply only if the detected language does.
+            fallback_language (None | str | Unset): Auto-detection hint: the language to use when detection is unsure. Must
+                be one of expected_languages, otherwise refused with invalid_transcription_options. Ignored when language_code
+                is set.
             medical_mode (bool | Unset): Bill and transcribe as a medical dictation. Requires language_code to be one of en,
                 en_au, en_uk, en_us, es, fr, de, de_ch; billed at a 100 percent surcharge on the duration. Cannot be combined
                 with vet_mode.
@@ -61,6 +84,12 @@ class CreateUploadBodyTranscriptionOptionsType0:
     speaker_detection: bool | Unset = UNSET
     keyterms_prompt: list[str] | Unset = UNSET
     prompt: None | str | Unset = UNSET
+    one_off_keyterms: list[str] | Unset = UNSET
+    one_off_prompt: None | str | Unset = UNSET
+    dictionary_ids: list[str] | Unset = UNSET
+    prompt_preset_id: None | str | Unset = UNSET
+    expected_languages: list[str] | Unset = UNSET
+    fallback_language: None | str | Unset = UNSET
     medical_mode: bool | Unset = UNSET
     vet_mode: bool | Unset = UNSET
     keep_disfluencies: bool | Unset = UNSET
@@ -87,6 +116,36 @@ class CreateUploadBodyTranscriptionOptionsType0:
             prompt = UNSET
         else:
             prompt = self.prompt
+
+        one_off_keyterms: list[str] | Unset = UNSET
+        if not isinstance(self.one_off_keyterms, Unset):
+            one_off_keyterms = self.one_off_keyterms
+
+        one_off_prompt: None | str | Unset
+        if isinstance(self.one_off_prompt, Unset):
+            one_off_prompt = UNSET
+        else:
+            one_off_prompt = self.one_off_prompt
+
+        dictionary_ids: list[str] | Unset = UNSET
+        if not isinstance(self.dictionary_ids, Unset):
+            dictionary_ids = self.dictionary_ids
+
+        prompt_preset_id: None | str | Unset
+        if isinstance(self.prompt_preset_id, Unset):
+            prompt_preset_id = UNSET
+        else:
+            prompt_preset_id = self.prompt_preset_id
+
+        expected_languages: list[str] | Unset = UNSET
+        if not isinstance(self.expected_languages, Unset):
+            expected_languages = self.expected_languages
+
+        fallback_language: None | str | Unset
+        if isinstance(self.fallback_language, Unset):
+            fallback_language = UNSET
+        else:
+            fallback_language = self.fallback_language
 
         medical_mode = self.medical_mode
 
@@ -117,6 +176,18 @@ class CreateUploadBodyTranscriptionOptionsType0:
             field_dict["keyterms_prompt"] = keyterms_prompt
         if prompt is not UNSET:
             field_dict["prompt"] = prompt
+        if one_off_keyterms is not UNSET:
+            field_dict["one_off_keyterms"] = one_off_keyterms
+        if one_off_prompt is not UNSET:
+            field_dict["one_off_prompt"] = one_off_prompt
+        if dictionary_ids is not UNSET:
+            field_dict["dictionary_ids"] = dictionary_ids
+        if prompt_preset_id is not UNSET:
+            field_dict["prompt_preset_id"] = prompt_preset_id
+        if expected_languages is not UNSET:
+            field_dict["expected_languages"] = expected_languages
+        if fallback_language is not UNSET:
+            field_dict["fallback_language"] = fallback_language
         if medical_mode is not UNSET:
             field_dict["medical_mode"] = medical_mode
         if vet_mode is not UNSET:
@@ -158,6 +229,39 @@ class CreateUploadBodyTranscriptionOptionsType0:
 
         prompt = _parse_prompt(d.pop("prompt", UNSET))
 
+        one_off_keyterms = cast(list[str], d.pop("one_off_keyterms", UNSET))
+
+        def _parse_one_off_prompt(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        one_off_prompt = _parse_one_off_prompt(d.pop("one_off_prompt", UNSET))
+
+        dictionary_ids = cast(list[str], d.pop("dictionary_ids", UNSET))
+
+        def _parse_prompt_preset_id(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        prompt_preset_id = _parse_prompt_preset_id(d.pop("prompt_preset_id", UNSET))
+
+        expected_languages = cast(list[str], d.pop("expected_languages", UNSET))
+
+        def _parse_fallback_language(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        fallback_language = _parse_fallback_language(d.pop("fallback_language", UNSET))
+
         medical_mode = d.pop("medical_mode", UNSET)
 
         vet_mode = d.pop("vet_mode", UNSET)
@@ -184,6 +288,12 @@ class CreateUploadBodyTranscriptionOptionsType0:
             speaker_detection=speaker_detection,
             keyterms_prompt=keyterms_prompt,
             prompt=prompt,
+            one_off_keyterms=one_off_keyterms,
+            one_off_prompt=one_off_prompt,
+            dictionary_ids=dictionary_ids,
+            prompt_preset_id=prompt_preset_id,
+            expected_languages=expected_languages,
+            fallback_language=fallback_language,
             medical_mode=medical_mode,
             vet_mode=vet_mode,
             keep_disfluencies=keep_disfluencies,
